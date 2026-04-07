@@ -1,6 +1,7 @@
 --[[
-    🚀 Rionism x Gemini - Sambung Kata V8.0 (Daily Expired Edition)
-    Fitur: Daily Key System (Reset Tiap Hari), Auto-Clear, & Advanced UI
+    🚀 Rionism x Gemini - Sambung Kata V9.1 (Legacy Design)
+    Fitur: Daily Key, Quick Refresh, Credits, & Auto-Clear logic.
+    Design: Mempertahankan UI Vertikal Klasik.
 ]]
 
 local Players = game:GetService("Players")
@@ -9,18 +10,16 @@ local VirtualInputManager = game:GetService("VirtualInputManager")
 local TweenService = game:GetService("TweenService")
 local LocalPlayer = Players.LocalPlayer
 
--- [ CONFIGURATION & DAILY KEY LOGIC ] --
+-- [ LOGIC: DAILY KEY ] --
 local function GetDailyKey()
-    local date = os.date("!*t", os.time() + 25200) -- Waktu Indonesia Barat (UTC+7)
-    -- Format Key: RION- (Hari) (Bulan) (Tahun)
-    -- Contoh: RION-08042026
+    local date = os.date("!*t", os.time() + 25200) -- WIB
     return string.format("RION-%02d%02d%04d", date.day, date.month, date.year)
 end
 
 local SETTINGS = {
     MainColor = Color3.fromRGB(0, 212, 255),
-    KeyLink = "https://link-rionism-gemini.com/getkey", -- Link harianmu
-    CorrectKey = GetDailyKey(), 
+    KeyLink = "https://link-rionism-gemini.com/getkey",
+    CorrectKey = GetDailyKey(),
     TypingDelay = 0.05,
     IsMinimized = false
 }
@@ -30,13 +29,13 @@ local usedWords = {}
 
 -- [ UI SETUP ] --
 local gui = Instance.new("ScreenGui")
-gui.Name = "RionismXGemini_V8"
+gui.Name = "RionismXGemini_V9_1"
 gui.ResetOnSpawn = false
 gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 260, 0, 360)
-main.Position = UDim2.new(0.5, -130, 0.4, -180)
+main.Size = UDim2.new(0, 260, 0, 400) -- Sedikit lebih panjang untuk menampung menu baru
+main.Position = UDim2.new(0.5, -130, 0.4, -200)
 main.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
 main.BorderSizePixel = 0
 main.Active = true
@@ -49,7 +48,7 @@ local stroke = Instance.new("UIStroke", main)
 stroke.Thickness = 2
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
 
--- [ LOGIN FRAME ] --
+-- [ LOGIN FRAME - TETAP SAMA ] --
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(1, 0, 1, 0)
 loginFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 15)
@@ -60,32 +59,20 @@ Instance.new("UICorner", loginFrame)
 local loginTitle = Instance.new("TextLabel")
 loginTitle.Size = UDim2.new(1, 0, 0, 80)
 loginTitle.BackgroundTransparency = 1
-loginTitle.Text = "RIONISM X GEMINI\nDAILY KEY SYSTEM"
+loginTitle.Text = "RIONISM X GEMINI\nDAILY LOGIN"
 loginTitle.TextColor3 = Color3.new(1, 1, 1)
 loginTitle.Font = Enum.Font.GothamBold
 loginTitle.TextSize = 15
 loginTitle.ZIndex = 11
 loginTitle.Parent = loginFrame
 
-local statusLabel = Instance.new("TextLabel")
-statusLabel.Size = UDim2.new(1, 0, 0, 20)
-statusLabel.Position = UDim2.new(0, 0, 0, 70)
-statusLabel.BackgroundTransparency = 1
-statusLabel.Text = "Status: Key Expired (Daily Reset)"
-statusLabel.TextColor3 = Color3.fromRGB(255, 100, 100)
-statusLabel.Font = Enum.Font.GothamMedium
-statusLabel.TextSize = 10
-statusLabel.ZIndex = 11
-statusLabel.Parent = loginFrame
-
 local keyInput = Instance.new("TextBox")
 keyInput.Size = UDim2.new(0, 210, 0, 40)
 keyInput.Position = UDim2.new(0.5, -105, 0.4, 0)
 keyInput.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-keyInput.PlaceholderText = "Paste Daily Key..."
+keyInput.PlaceholderText = "Paste Key..."
 keyInput.Text = ""
 keyInput.TextColor3 = Color3.new(1, 1, 1)
-keyInput.Font = Enum.Font.GothamSemibold
 keyInput.ZIndex = 11
 keyInput.Parent = loginFrame
 Instance.new("UICorner", keyInput)
@@ -94,25 +81,13 @@ local checkBtn = Instance.new("TextButton")
 checkBtn.Size = UDim2.new(0, 210, 0, 40)
 checkBtn.Position = UDim2.new(0.5, -105, 0.55, 0)
 checkBtn.BackgroundColor3 = SETTINGS.MainColor
-checkBtn.Text = "VERIFY DAILY KEY"
-checkBtn.TextColor3 = Color3.new(0, 0, 0)
+checkBtn.Text = "VERIFY"
 checkBtn.Font = Enum.Font.GothamBold
 checkBtn.ZIndex = 11
 checkBtn.Parent = loginFrame
 Instance.new("UICorner", checkBtn)
 
-local getBtn = Instance.new("TextButton")
-getBtn.Size = UDim2.new(0, 210, 0, 40)
-getBtn.Position = UDim2.new(0.5, -105, 0.7, 0)
-getBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
-getBtn.Text = "GET TODAY'S KEY"
-getBtn.TextColor3 = Color3.new(1, 1, 1)
-getBtn.Font = Enum.Font.GothamBold
-getBtn.ZIndex = 11
-getBtn.Parent = loginFrame
-Instance.new("UICorner", getBtn)
-
--- [ CONTENT PANEL ] --
+-- [ HEADER ] --
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 45)
 header.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
@@ -123,7 +98,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -60, 1, 0)
 title.Position = UDim2.new(0, 12, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "RIONISM X GEMINI V8"
+title.Text = "RIONISM X GEMINI V9.1"
 title.TextColor3 = SETTINGS.MainColor
 title.Font = Enum.Font.GothamBold
 title.TextSize = 12
@@ -148,7 +123,7 @@ content.BackgroundTransparency = 1
 content.Visible = false
 content.Parent = main
 
--- [ SEARCH & SCROLL ] --
+-- [ SEARCH SECTION ] --
 local searchFrame = Instance.new("Frame")
 searchFrame.Size = UDim2.new(1, -20, 0, 38)
 searchFrame.Position = UDim2.new(0, 10, 0, 10)
@@ -163,7 +138,6 @@ search.BackgroundTransparency = 1
 search.PlaceholderText = "Input Awalan..."
 search.Text = ""
 search.TextColor3 = Color3.new(1, 1, 1)
-search.Font = Enum.Font.GothamSemibold
 search.Parent = searchFrame
 
 local clearBtn = Instance.new("TextButton")
@@ -176,44 +150,70 @@ clearBtn.Font = Enum.Font.GothamBold
 clearBtn.Parent = searchFrame
 Instance.new("UICorner", clearBtn)
 
+-- [ ACTION BUTTONS: REFRESH & CREDITS ] --
+local actionFrame = Instance.new("Frame")
+actionFrame.Size = UDim2.new(1, -20, 0, 30)
+actionFrame.Position = UDim2.new(0, 10, 0, 55)
+actionFrame.BackgroundTransparency = 1
+actionFrame.Parent = content
+
+local refreshBtn = Instance.new("TextButton")
+refreshBtn.Size = UDim2.new(0.5, -5, 1, 0)
+refreshBtn.BackgroundColor3 = Color3.fromRGB(30, 35, 30)
+refreshBtn.Text = "REFRESH WORDS"
+refreshBtn.TextColor3 = Color3.fromRGB(150, 255, 150)
+refreshBtn.Font = Enum.Font.GothamBold
+refreshBtn.TextSize = 10
+refreshBtn.Parent = actionFrame
+Instance.new("UICorner", refreshBtn)
+
+local creditsBtn = Instance.new("TextButton")
+creditsBtn.Size = UDim2.new(0.5, -5, 1, 0)
+creditsBtn.Position = UDim2.new(0.5, 5, 0, 0)
+creditsBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+creditsBtn.Text = "CREDITS"
+creditsBtn.TextColor3 = Color3.new(1,1,1)
+creditsBtn.Font = Enum.Font.GothamBold
+creditsBtn.TextSize = 10
+creditsBtn.Parent = actionFrame
+Instance.new("UICorner", creditsBtn)
+
+-- [ LIST KATA ] --
 local scroll = Instance.new("ScrollingFrame")
-scroll.Size = UDim2.new(1, -20, 1, -110)
-scroll.Position = UDim2.new(0, 10, 0, 60)
+scroll.Size = UDim2.new(1, -20, 1, -100)
+scroll.Position = UDim2.new(0, 10, 0, 95)
 scroll.BackgroundTransparency = 1
 scroll.ScrollBarThickness = 2
 scroll.Parent = content
 Instance.new("UIListLayout", scroll).Padding = UDim.new(0, 6)
 
--- [ LOGIC: VERIFICATION ] --
-getBtn.MouseButton1Click:Connect(function()
-    if setclipboard then
-        setclipboard(SETTINGS.KeyLink)
-        getBtn.Text = "LINK COPIED!"
-        task.wait(2)
-        getBtn.Text = "GET TODAY'S KEY"
-    else
-        getBtn.Text = "EXECUTOR ERROR"
-    end
+-- [ LOGIC: BUTTON ACTIONS ] --
+refreshBtn.MouseButton1Click:Connect(function()
+    usedWords = {}
+    refreshBtn.Text = "DATA RESET!"
+    task.wait(1)
+    refreshBtn.Text = "REFRESH WORDS"
 end)
 
+creditsBtn.MouseButton1Click:Connect(function()
+    local oldText = creditsBtn.Text
+    creditsBtn.Text = "DEV: RIONISM & GEMINI"
+    task.wait(2)
+    creditsBtn.Text = oldText
+end)
+
+-- [ LOGIC: LOGIN & CORE ] --
 checkBtn.MouseButton1Click:Connect(function()
-    -- Cek Key Real-time
     if keyInput.Text == SETTINGS.CorrectKey then
-        checkBtn.Text = "VALID KEY - LOADING..."
-        checkBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 120)
-        task.wait(1)
         loginFrame.Visible = false
         content.Visible = true
     else
-        checkBtn.Text = "KEY EXPIRED/WRONG"
-        checkBtn.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-        task.wait(1.5)
-        checkBtn.Text = "VERIFY DAILY KEY"
-        checkBtn.BackgroundColor3 = SETTINGS.MainColor
+        checkBtn.Text = "INVALID KEY"
+        task.wait(1)
+        checkBtn.Text = "VERIFY"
     end
 end)
 
--- [ LOGIC: GAMEPLAY ] --
 local function sendInput(word)
     local prefix = search.Text:lower():gsub("%s+", "")
     local suffix = word:sub(#prefix + 1)
@@ -224,7 +224,6 @@ local function sendInput(word)
         task.wait(SETTINGS.TypingDelay)
         VirtualInputManager:SendKeyEvent(false, key, false, game)
     end
-    task.wait(0.05)
     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
     search.Text = ""
@@ -262,7 +261,7 @@ end
 minBtn.MouseButton1Click:Connect(function()
     if not content.Visible then return end
     SETTINGS.IsMinimized = not SETTINGS.IsMinimized
-    local targetSize = SETTINGS.IsMinimized and UDim2.new(0, 260, 0, 45) or UDim2.new(0, 260, 0, 360)
+    local targetSize = SETTINGS.IsMinimized and UDim2.new(0, 260, 0, 45) or UDim2.new(0, 260, 0, 400)
     TweenService:Create(main, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
     minBtn.Text = SETTINGS.IsMinimized and "+" or "−"
 end)
@@ -280,5 +279,3 @@ RunService.RenderStepped:Connect(function()
     stroke.Color = Color3.fromHSV(h, 0.8, 1)
     title.TextColor3 = Color3.fromHSV(h, 0.7, 1)
 end)
-
-print("Rionism x Gemini V8 Loaded - Today's Key: " .. SETTINGS.CorrectKey)
