@@ -1,6 +1,6 @@
 --[[
-    🚀 Rionism x Gemini - Sambung Kata V5 (Advanced)
-    Fitur: Auto-Clear, Adjustable Speed, & Smart Filtering
+    🚀 Rionism x Gemini - Sambung Kata V5.1 (Minimize Edition)
+    Fitur: Minimize UI, Auto-Clear, & Adjustable Speed
 ]]
 
 local Players = game:GetService("Players")
@@ -12,7 +12,7 @@ local LocalPlayer = Players.LocalPlayer
 -- Global Settings
 local SETTINGS = {
     MainColor = Color3.fromRGB(0, 212, 255),
-    TypingDelay = 0.05, -- Default Speed
+    TypingDelay = 0.05,
     AutoEnter = true,
     AutoClear = true,
     IsMinimized = false
@@ -23,7 +23,7 @@ local usedWords = {}
 
 -- UI Creation
 local gui = Instance.new("ScreenGui")
-gui.Name = "RionismXGemini_V5"
+gui.Name = "RionismXGemini_V5_1"
 gui.ResetOnSpawn = false
 gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
@@ -32,8 +32,191 @@ local main = Instance.new("Frame")
 main.Size = UDim2.new(0, 240, 0, 340)
 main.Position = UDim2.new(0.5, -120, 0.4, -170)
 main.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
-main.BackgroundTransparency = 0.1
 main.BorderSizePixel = 0
+main.Active = true
+main.Draggable = true
+main.ClipsDescendants = true
+main.Parent = gui
+
+local corner = Instance.new("UICorner", main)
+local stroke = Instance.new("UIStroke", main)
+stroke.Thickness = 2
+stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+-- Header
+local header = Instance.new("Frame")
+header.Size = UDim2.new(1, 0, 0, 40)
+header.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+header.Parent = main
+Instance.new("UICorner", header)
+
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, -50, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "RIONISM X GEMINI"
+title.TextColor3 = SETTINGS.MainColor
+title.Font = Enum.Font.GothamBold
+title.TextSize = 13
+title.TextXAlignment = Enum.TextXAlignment.Left
+title.Parent = header
+
+-- Minimize Button
+local minBtn = Instance.new("TextButton")
+minBtn.Size = UDim2.new(0, 30, 0, 30)
+minBtn.Position = UDim2.new(1, -35, 0, 5)
+minBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+minBtn.Text = "−"
+minBtn.TextColor3 = Color3.new(1, 1, 1)
+minBtn.Font = Enum.Font.GothamBold
+minBtn.TextSize = 18
+minBtn.Parent = header
+Instance.new("UICorner", minBtn)
+
+-- Content Container (To hide when minimized)
+local content = Instance.new("Frame")
+content.Size = UDim2.new(1, 0, 1, -40)
+content.Position = UDim2.new(0, 0, 0, 40)
+content.BackgroundTransparency = 1
+content.Parent = main
+
+-- Speed Label & Buttons
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Size = UDim2.new(1, -20, 0, 20)
+speedLabel.Position = UDim2.new(0, 10, 0, 5)
+speedLabel.BackgroundTransparency = 1
+speedLabel.Text = "Typing Speed: " .. SETTINGS.TypingDelay .. "s"
+speedLabel.TextColor3 = Color3.new(0.7, 0.7, 0.7)
+speedLabel.Font = Enum.Font.GothamMedium
+speedLabel.TextSize = 10
+speedLabel.Parent = content
+
+local function createSpeedBtn(name, delay, xPos)
+    local btn = Instance.new("TextButton")
+    btn.Size = UDim2.new(0, 70, 0, 22)
+    btn.Position = UDim2.new(0, xPos, 0, 28)
+    btn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+    btn.Text = name
+    btn.TextColor3 = Color3.new(1,1,1)
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 10
+    btn.Parent = content
+    Instance.new("UICorner", btn)
+
+    btn.MouseButton1Click:Connect(function()
+        SETTINGS.TypingDelay = delay
+        speedLabel.Text = "Typing Speed: " .. delay .. "s"
+    end)
+end
+
+createSpeedBtn("FAST", 0.01, 10)
+createSpeedBtn("NORMAL", 0.05, 85)
+createSpeedBtn("SAFE", 0.15, 160)
+
+-- Search Box
+local search = Instance.new("TextBox")
+search.Size = UDim2.new(1, -20, 0, 35)
+search.Position = UDim2.new(0, 10, 0, 60)
+search.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+search.PlaceholderText = "Ketik awalan..."
+search.Text = ""
+search.TextColor3 = Color3.new(1, 1, 1)
+search.Font = Enum.Font.GothamSemibold
+search.Parent = content
+Instance.new("UICorner", search)
+
+-- Scroll List
+local scroll = Instance.new("ScrollingFrame")
+scroll.Size = UDim2.new(1, -20, 1, -110)
+scroll.Position = UDim2.new(0, 10, 0, 105)
+scroll.BackgroundTransparency = 1
+scroll.ScrollBarThickness = 2
+scroll.Parent = content
+Instance.new("UIListLayout", scroll).Padding = UDim.new(0, 5)
+
+-- Logic: Typing Engine
+local function sendInput(word)
+    local prefix = search.Text:lower():gsub("%s+", "")
+    local suffix = word:sub(#prefix + 1)
+    
+    for i = 1, #suffix do
+        local char = suffix:sub(i, i)
+        local key = Enum.KeyCode[char:upper()] or Enum.KeyCode.Minus
+        VirtualInputManager:SendKeyEvent(true, key, false, game)
+        task.wait(SETTINGS.TypingDelay)
+        VirtualInputManager:SendKeyEvent(false, key, false, game)
+    end
+    
+    if SETTINGS.AutoEnter then
+        task.wait(0.05)
+        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
+        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
+    end
+
+    if SETTINGS.AutoClear then
+        search.Text = "" 
+    end
+end
+
+-- Refresh List
+local function updateList()
+    for _, v in pairs(scroll:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
+    local query = search.Text:lower():gsub("%s+", "")
+    if query == "" then return end
+    
+    local found = 0
+    for _, word in ipairs(words) do
+        if word:sub(1, #query) == query and not usedWords[word] then
+            found = found + 1
+            local b = Instance.new("TextButton")
+            b.Size = UDim2.new(1, -5, 0, 30)
+            b.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+            b.Text = "  " .. word:upper()
+            b.TextColor3 = SETTINGS.MainColor
+            b.Font = Enum.Font.GothamBold
+            b.TextXAlignment = Enum.TextXAlignment.Left
+            b.Parent = scroll
+            Instance.new("UICorner", b)
+
+            b.MouseButton1Click:Connect(function()
+                usedWords[word] = true
+                sendInput(word)
+                updateList()
+            end)
+            if found >= 15 then break end
+        end
+    end
+    scroll.CanvasSize = UDim2.new(0,0,0, found * 35)
+end
+
+-- Minimize Logic
+minBtn.MouseButton1Click:Connect(function()
+    SETTINGS.IsMinimized = not SETTINGS.IsMinimized
+    local targetSize = SETTINGS.IsMinimized and UDim2.new(0, 240, 0, 40) or UDim2.new(0, 240, 0, 340)
+    
+    TweenService:Create(main, TweenInfo.new(0.4, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
+    content.Visible = not SETTINGS.IsMinimized
+    minBtn.Text = SETTINGS.IsMinimized and "+" or "−"
+end)
+
+-- Load Words
+task.spawn(function()
+    local ok, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/ZenoScripter/Script/refs/heads/main/Sambung%20Kata%20(%20indo%20)/wordlist_kbbi.lua") end)
+    if ok then
+        for w in res:gmatch("([%a%-]+)") do if #w > 1 then table.insert(words, w:lower()) end end
+    end
+end)
+
+search:GetPropertyChangedSignal("Text"):Connect(updateList)
+
+-- Rainbow & Ping
+RunService.RenderStepped:Connect(function()
+    local h = tick() % 5 / 5
+    stroke.Color = Color3.fromHSV(h, 0.8, 1)
+    title.TextColor3 = Color3.fromHSV(h, 0.7, 1)
+end)
+
+print("Rionism x Gemini V5.1 Loaded - Minimize Ready")
 main.Active = true
 main.Draggable = true
 main.Parent = gui
