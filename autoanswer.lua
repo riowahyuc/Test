@@ -1,372 +1,340 @@
 --[[
-    🚀 Rionism x Gemini - Sambung Kata V9.4 (Fix Overlay Edition)
-    Fitur: Daily Key, Copy Link, Refresh, Credits, dan PERBAIKAN LAYOUT LOGIN.
-    Design: Desain vertikal klasik dengan FPS & Ping.
+    🚀 Rionism x Gemini - Sambung Kata V9.5 (Super GG Edition)
+    ✨ Visual: Super Glow, Dynamic Rainbow, & Modern Aggressive UI.
+    📊 Performance: Real-time Precision FPS & Ping Tracker.
+    🛠 Fix: Zero-Overlap Layout & Clean Navigation.
 ]]
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local TweenService = game:GetService("TweenService")
-local LocalPlayer = Players.LocalPlayer
 local Stats = game:GetService("Stats")
+local LocalPlayer = Players.LocalPlayer
 
--- [ LOGIC: DAILY KEY ] --
+-- [ CONFIGURATION ] --
 local function GetDailyKey()
-    local date = os.date("!*t", os.time() + 25200) -- UTC+7 (WIB)
+    local date = os.date("!*t", os.time() + 25200)
     return string.format("RION-%02d%02d%04d", date.day, date.month, date.year)
 end
 
 local SETTINGS = {
-    MainColor = Color3.fromRGB(0, 212, 255),
-    KeyLink = "https://link-rionism-gemini.com/getkey", -- Ganti dengan link kamu
+    MainColor = Color3.fromRGB(0, 255, 255),
+    SecondaryColor = Color3.fromRGB(255, 0, 150),
+    KeyLink = "https://link-rionism-gemini.com/getkey",
     CorrectKey = GetDailyKey(),
-    TypingDelay = 0.05,
+    TypingDelay = 0.04, -- Sedikit lebih cepat (Super GG)
     IsMinimized = false
 }
 
 local words = {}
 local usedWords = {}
 
--- [ UI SETUP ] --
+-- [ UI ROOT ] --
 local gui = Instance.new("ScreenGui")
-gui.Name = "RionismXGemini_V9_4"
+gui.Name = "RionismXGemini_V9_5_GG"
+gui.IgnoreGuiInset = true
 gui.ResetOnSpawn = false
 gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 260, 0, 420)
-main.Position = UDim2.new(0.5, -130, 0.4, -210)
-main.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
+main.Size = UDim2.new(0, 270, 0, 440)
+main.Position = UDim2.new(0.5, -135, 0.4, -220)
+main.BackgroundColor3 = Color3.fromRGB(8, 8, 10)
 main.BorderSizePixel = 0
 main.Active = true
 main.Draggable = true
 main.ClipsDescendants = true
-main.ZIndex = 5
 main.Parent = gui
 
-Instance.new("UICorner", main)
-local stroke = Instance.new("UIStroke", main)
-stroke.Thickness = 2
-stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+local mainCorner = Instance.new("UICorner", main)
+mainCorner.CornerRadius = UDim.new(0, 10)
 
--- [ ===================================== ] --
--- [ LOGIN FRAME + FIX OVERLAY ] --
--- [ ===================================== ] --
+local mainStroke = Instance.new("UIStroke", main)
+mainStroke.Thickness = 2.5
+mainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+mainStroke.Transparency = 0.2
+
+-- [ LOGIN LAYER (ANTI-OVERLAP) ] --
 local loginFrame = Instance.new("Frame")
 loginFrame.Size = UDim2.new(1, 0, 1, 0)
-loginFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 15)
-loginFrame.ZIndex = 10 -- Lebih tinggi dari 'main' agar menutupi
-loginFrame.Visible = true -- Tampilkan saat mulai
+loginFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
+loginFrame.ZIndex = 20
 loginFrame.Parent = main
-Instance.new("UICorner", loginFrame)
 
--- [ SISTEM LAYOUT UNTUK LOGIN (MENCEGAH BERTUMPUK) ] --
-local loginLayout = Instance.new("UIListLayout")
-loginLayout.Parent = loginFrame
-loginLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center -- Tengah secara horizontal
-loginLayout.VerticalAlignment = Enum.VerticalAlignment.Center -- Tengah secara vertikal
-loginLayout.Padding = UDim.new(0, 12) -- Jarak antar elemen (ini kuncinya!)
+Instance.new("UICorner", loginFrame).CornerRadius = UDim.new(0, 10)
 
--- Judul
+local loginPadding = Instance.new("UIPadding", loginFrame)
+loginPadding.PaddingTop = UDim.new(0, 40)
+
+local loginList = Instance.new("UIListLayout", loginFrame)
+loginList.HorizontalAlignment = Enum.HorizontalAlignment.Center
+loginList.Padding = UDim.new(0, 15)
+
 local loginTitle = Instance.new("TextLabel")
-loginTitle.Size = UDim2.new(1, -20, 0, 60)
+loginTitle.Size = UDim2.new(1, 0, 0, 60)
 loginTitle.BackgroundTransparency = 1
-loginTitle.Text = "RIONISM X GEMINI\nACCESS SYSTEM"
+loginTitle.Text = "RIONISM X GEMINI\n< SUPER GG EDITION >"
 loginTitle.TextColor3 = Color3.new(1, 1, 1)
 loginTitle.Font = Enum.Font.GothamBold
-loginTitle.TextSize = 16
-loginTitle.TextWrapped = true
-loginTitle.ZIndex = 11
+loginTitle.TextSize = 18
 loginTitle.Parent = loginFrame
 
--- Input Kata Kunci
 local keyInput = Instance.new("TextBox")
-keyInput.Size = UDim2.new(0, 210, 0, 40)
-keyInput.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
-keyInput.PlaceholderText = "Paste Daily Key Here..."
+keyInput.Size = UDim2.new(0, 220, 0, 45)
+keyInput.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+keyInput.PlaceholderText = "Enter Daily Key..."
 keyInput.Text = ""
 keyInput.TextColor3 = Color3.new(1, 1, 1)
 keyInput.Font = Enum.Font.GothamSemibold
-keyInput.ZIndex = 11
 keyInput.Parent = loginFrame
 Instance.new("UICorner", keyInput)
 
--- Tombol Verifikasi
 local checkBtn = Instance.new("TextButton")
-checkBtn.Size = UDim2.new(0, 210, 0, 40)
+checkBtn.Size = UDim2.new(0, 220, 0, 45)
 checkBtn.BackgroundColor3 = SETTINGS.MainColor
-checkBtn.Text = "VERIFY"
-checkBtn.TextColor3 = Color3.new(0,0,0)
+checkBtn.Text = "ACCESS SYSTEM"
+checkBtn.TextColor3 = Color3.new(0, 0, 0)
 checkBtn.Font = Enum.Font.GothamBold
-checkBtn.TextSize = 14
-checkBtn.ZIndex = 11
 checkBtn.Parent = loginFrame
 Instance.new("UICorner", checkBtn)
 
--- Tombol Salin Link Key
 local getBtn = Instance.new("TextButton")
-getBtn.Size = UDim2.new(0, 210, 0, 40)
-getBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 45)
-getBtn.Text = "GET KEY (COPY LINK)"
+getBtn.Size = UDim2.new(0, 220, 0, 40)
+getBtn.BackgroundTransparency = 0.8
+getBtn.BackgroundColor3 = Color3.new(1,1,1)
+getBtn.Text = "GET DAILY KEY"
 getBtn.TextColor3 = Color3.new(1, 1, 1)
 getBtn.Font = Enum.Font.GothamBold
-getBtn.TextSize = 12
-getBtn.ZIndex = 11
 getBtn.Parent = loginFrame
 Instance.new("UICorner", getBtn)
 
-
--- [ ===================================== ] --
--- [ MAIN CONTENT FRAME ] --
--- [ ===================================== ] --
-local content = Instance.new("Frame")
-content.Size = UDim2.new(1, 0, 1, -45)
-content.Position = UDim2.new(0, 0, 0, 45)
-content.BackgroundTransparency = 1
-content.Visible = false -- Sembunyikan sampai login
-content.Parent = main
-
 -- [ HEADER CONTENT ] --
 local header = Instance.new("Frame")
-header.Size = UDim2.new(1, 0, 0, 45)
-header.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+header.Size = UDim2.new(1, 0, 0, 50)
+header.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
 header.Parent = main
-Instance.new("UICorner", header)
 
 local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -60, 1, 0)
-title.Position = UDim2.new(0, 12, 0, 0)
+title.Position = UDim2.new(0, 15, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "RIONISM X GEMINI V9.4"
+title.Text = "RIONISM X GEMINI"
 title.TextColor3 = SETTINGS.MainColor
 title.Font = Enum.Font.GothamBold
-title.TextSize = 12
+title.TextSize = 13
 title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
 local minBtn = Instance.new("TextButton")
-minBtn.Size = UDim2.new(0, 40, 0, 35)
+minBtn.Size = UDim2.new(0, 40, 0, 40)
 minBtn.Position = UDim2.new(1, -45, 0, 5)
-minBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
-minBtn.Text = "−"
+minBtn.BackgroundTransparency = 1
+minBtn.Text = "▼"
 minBtn.TextColor3 = Color3.new(1, 1, 1)
 minBtn.Font = Enum.Font.GothamBold
-minBtn.TextSize = 22
+minBtn.TextSize = 16
 minBtn.Parent = header
-Instance.new("UICorner", minBtn)
 
+local content = Instance.new("Frame")
+content.Size = UDim2.new(1, 0, 1, -50)
+content.Position = UDim2.new(0, 0, 0, 50)
+content.BackgroundTransparency = 1
+content.Visible = false
+content.Parent = main
 
--- [ PERFORMANCE STATS (FPS & PING) ] --
-local statsFrame = Instance.new("Frame")
-statsFrame.Size = UDim2.new(1, -20, 0, 20)
-statsFrame.Position = UDim2.new(0, 10, 0, 5)
-statsFrame.BackgroundTransparency = 1
-statsFrame.Parent = content
+-- [ SUPER GG STATS ] --
+local statsBox = Instance.new("Frame")
+statsBox.Size = UDim2.new(1, -20, 0, 25)
+statsBox.Position = UDim2.new(0, 10, 0, 5)
+statsBox.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+statsBox.Parent = content
+Instance.new("UICorner", statsBox).CornerRadius = UDim.new(0, 5)
 
 local fpsLabel = Instance.new("TextLabel")
-fpsLabel.Size = UDim2.new(0.5, 0, 1, 0)
+fpsLabel.Size = UDim2.new(0.5, -10, 1, 0)
+fpsLabel.Position = UDim2.new(0, 10, 0, 0)
 fpsLabel.BackgroundTransparency = 1
-fpsLabel.Text = "FPS: 60"
-fpsLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-fpsLabel.Font = Enum.Font.GothamMedium
-fpsLabel.TextSize = 10
+fpsLabel.Text = "FPS: --"
+fpsLabel.TextColor3 = Color3.fromRGB(0, 255, 100)
+fpsLabel.Font = Enum.Font.Code
+fpsLabel.TextSize = 11
 fpsLabel.TextXAlignment = Enum.TextXAlignment.Left
-fpsLabel.Parent = statsFrame
+fpsLabel.Parent = statsBox
 
 local pingLabel = Instance.new("TextLabel")
-pingLabel.Size = UDim2.new(0.5, 0, 1, 0)
+pingLabel.Size = UDim2.new(0.5, -10, 1, 0)
 pingLabel.Position = UDim2.new(0.5, 0, 0, 0)
 pingLabel.BackgroundTransparency = 1
-pingLabel.Text = "PING: 0ms"
-pingLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
-pingLabel.Font = Enum.Font.GothamMedium
-pingLabel.TextSize = 10
+pingLabel.Text = "MS: --"
+pingLabel.TextColor3 = Color3.fromRGB(255, 200, 0)
+pingLabel.Font = Enum.Font.Code
+pingLabel.TextSize = 11
 pingLabel.TextXAlignment = Enum.TextXAlignment.Right
-pingLabel.Parent = statsFrame
+pingLabel.Parent = statsBox
 
--- [ SEARCH FRAME ] --
+-- [ SEARCH & ACTION BAR ] --
 local searchFrame = Instance.new("Frame")
-searchFrame.Size = UDim2.new(1, -20, 0, 38)
-searchFrame.Position = UDim2.new(0, 10, 0, 30)
-searchFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+searchFrame.Size = UDim2.new(1, -20, 0, 40)
+searchFrame.Position = UDim2.new(0, 10, 0, 40)
+searchFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
 searchFrame.Parent = content
 Instance.new("UICorner", searchFrame)
 
 local search = Instance.new("TextBox")
-search.Size = UDim2.new(1, -40, 1, 0)
-search.Position = UDim2.new(0, 10, 0, 0)
+search.Size = UDim2.new(1, -50, 1, 0)
+search.Position = UDim2.new(0, 12, 0, 0)
 search.BackgroundTransparency = 1
-search.PlaceholderText = "Input Awalan..."
+search.PlaceholderText = "Type prefix..."
 search.Text = ""
 search.TextColor3 = Color3.new(1, 1, 1)
+search.Font = Enum.Font.GothamSemibold
 search.Parent = searchFrame
 
 local clearBtn = Instance.new("TextButton")
-clearBtn.Size = UDim2.new(0, 25, 0, 25)
-clearBtn.Position = UDim2.new(1, -30, 0.5, -12)
-clearBtn.BackgroundColor3 = Color3.fromRGB(40, 20, 20)
+clearBtn.Size = UDim2.new(0, 30, 0, 30)
+clearBtn.Position = UDim2.new(1, -35, 0.5, -15)
+clearBtn.BackgroundTransparency = 1
 clearBtn.Text = "×"
-clearBtn.TextColor3 = Color3.new(1, 0.3, 0.3)
+clearBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
 clearBtn.Font = Enum.Font.GothamBold
+clearBtn.TextSize = 24
 clearBtn.Parent = searchFrame
-Instance.new("UICorner", clearBtn)
 
-local actionFrame = Instance.new("Frame")
-actionFrame.Size = UDim2.new(1, -20, 0, 30)
-actionFrame.Position = UDim2.new(0, 10, 0, 75)
-actionFrame.BackgroundTransparency = 1
-actionFrame.Parent = content
+local btnContainer = Instance.new("Frame")
+btnContainer.Size = UDim2.new(1, -20, 0, 35)
+btnContainer.Position = UDim2.new(0, 10, 0, 90)
+btnContainer.BackgroundTransparency = 1
+btnContainer.Parent = content
 
 local refreshBtn = Instance.new("TextButton")
-refreshBtn.Size = UDim2.new(0, 115, 1, 0)
-refreshBtn.BackgroundColor3 = Color3.fromRGB(30, 35, 30)
-refreshBtn.Text = "REFRESH"
-refreshBtn.TextColor3 = Color3.fromRGB(150, 255, 150)
+refreshBtn.Size = UDim2.new(0.5, -5, 1, 0)
+refreshBtn.BackgroundColor3 = Color3.fromRGB(30, 40, 30)
+refreshBtn.Text = "REFRESH DATA"
+refreshBtn.TextColor3 = Color3.fromRGB(100, 255, 100)
 refreshBtn.Font = Enum.Font.GothamBold
 refreshBtn.TextSize = 10
-refreshBtn.Parent = actionFrame
+refreshBtn.Parent = btnContainer
 Instance.new("UICorner", refreshBtn)
 
 local creditsBtn = Instance.new("TextButton")
-creditsBtn.Size = UDim2.new(0, 115, 1, 0)
-creditsBtn.Position = UDim2.new(1, -115, 0, 0)
-creditsBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
-creditsBtn.Text = "CREDITS"
-creditsBtn.TextColor3 = Color3.new(1,1,1)
+creditsBtn.Size = UDim2.new(0.5, -5, 1, 0)
+creditsBtn.Position = UDim2.new(0.5, 5, 0, 0)
+creditsBtn.BackgroundColor3 = Color3.fromRGB(40, 30, 40)
+creditsBtn.Text = "SYSTEM CREDITS"
+creditsBtn.TextColor3 = Color3.fromRGB(255, 100, 255)
 creditsBtn.Font = Enum.Font.GothamBold
 creditsBtn.TextSize = 10
-creditsBtn.Parent = actionFrame
+creditsBtn.Parent = btnContainer
 Instance.new("UICorner", creditsBtn)
 
--- [ LIST KATA (SCROLLING) ] --
+-- [ WORD LIST (NEON STYLE) ] --
 local scroll = Instance.new("ScrollingFrame")
-scroll.Size = UDim2.new(1, -20, 1, -120)
-scroll.Position = UDim2.new(0, 10, 0, 115)
+scroll.Size = UDim2.new(1, -20, 1, -140)
+scroll.Position = UDim2.new(0, 10, 0, 135)
 scroll.BackgroundTransparency = 1
-scroll.ScrollBarThickness = 2
+scroll.BorderSizePixel = 0
+scroll.ScrollBarThickness = 3
 scroll.ScrollBarImageColor3 = SETTINGS.MainColor
 scroll.Parent = content
-Instance.new("UIListLayout", scroll).Padding = UDim.new(0, 6)
+Instance.new("UIListLayout", scroll).Padding = UDim.new(0, 8)
 
--- [ UTILS: PERFORMANCE TRACKER ] --
+-- [ SYSTEM LOGIC ] --
 task.spawn(function()
-    while task.wait(1) do
+    while task.wait(0.5) do
         local fps = math.floor(1/RunService.RenderStepped:Wait())
         local ping = math.floor(Stats.Network.ServerStatsItem["Data Ping"]:GetValue())
         fpsLabel.Text = "FPS: " .. fps
         pingLabel.Text = "PING: " .. ping .. "ms"
-        
-        -- Warna indikator ping
-        if ping < 100 then pingLabel.TextColor3 = Color3.new(0,1,0)
-        elseif ping < 200 then pingLabel.TextColor3 = Color3.new(1,1,0)
-        else pingLabel.TextColor3 = Color3.new(1,0,0) end
-    end
-end)
-
--- [ LOGIC: SECURITY & LOGIN ] --
-getBtn.MouseButton1Click:Connect(function()
-    if setclipboard then
-        setclipboard(SETTINGS.KeyLink)
-        getBtn.Text = "LINK COPIED!"
-        task.wait(1.5)
-        getBtn.Text = "GET KEY (COPY LINK)"
-    else
-        getBtn.Text = "Executor Not Support"
     end
 end)
 
 checkBtn.MouseButton1Click:Connect(function()
     if keyInput.Text == SETTINGS.CorrectKey then
-        loginBtn.Text = "Verifying..."
+        TweenService:Create(loginFrame, TweenInfo.new(0.5), {Position = UDim2.new(0, 0, 1, 0)}):Play()
         task.wait(0.5)
-        loginFrame.Visible = false -- Sembunyikan login
-        content.Visible = true -- Tampilkan konten utama
+        loginFrame.Visible = false
+        content.Visible = true
     else
-        checkBtn.Text = "INVALID DAILY KEY"
-        checkBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50) -- Merah
+        checkBtn.Text = "ACCESS DENIED"
+        checkBtn.BackgroundColor3 = Color3.new(0.8, 0.2, 0.2)
         task.wait(1.5)
-        checkBtn.Text = "VERIFY"
-        checkBtn.BackgroundColor3 = SETTINGS.MainColor -- Kembalikan warna
+        checkBtn.Text = "ACCESS SYSTEM"
+        checkBtn.BackgroundColor3 = SETTINGS.MainColor
     end
 end)
 
+getBtn.MouseButton1Click:Connect(function()
+    if setclipboard then setclipboard(SETTINGS.KeyLink) getBtn.Text = "LINK COPIED!" task.wait(1) getBtn.Text = "GET DAILY KEY" end
+end)
+
 refreshBtn.MouseButton1Click:Connect(function()
-    usedWords = {} -- Reset database kata
-    refreshBtn.Text = "DATA RESET!"
+    usedWords = {}
+    refreshBtn.Text = "DB CLEANED"
     task.wait(1)
-    refreshBtn.Text = "REFRESH"
+    refreshBtn.Text = "REFRESH DATA"
 end)
 
-creditsBtn.MouseButton1Click:Connect(function()
-    creditsBtn.Text = "DEV: RIONISM & GEMINI"
-    task.wait(2)
-    creditsBtn.Text = "CREDITS"
-end)
-
--- [ LOGIC: SAMBUNG KATA ENGINE ] --
+-- [ CORE ENGINE ] --
 local function sendInput(word)
     local prefix = search.Text:lower():gsub("%s+", "")
     local suffix = word:sub(#prefix + 1)
     for i = 1, #suffix do
         local char = suffix:sub(i, i)
-        local key = Enum.KeyCode[char:upper()] or Enum.KeyCode.Minus
-        VirtualInputManager:SendKeyEvent(true, key, false, game)
+        VirtualInputManager:SendKeyEvent(true, Enum.KeyCode[char:upper()] or Enum.KeyCode.Minus, false, game)
         task.wait(SETTINGS.TypingDelay)
-        VirtualInputManager:SendKeyEvent(false, key, false, game)
+        VirtualInputManager:SendKeyEvent(false, Enum.KeyCode[char:upper()] or Enum.KeyCode.Minus, false, game)
     end
     VirtualInputManager:SendKeyEvent(true, Enum.KeyCode.Return, false, game)
     VirtualInputManager:SendKeyEvent(false, Enum.KeyCode.Return, false, game)
-    search.Text = "" -- Bersihkan input otomatis
+    search.Text = ""
 end
 
 local function updateList()
     for _, v in pairs(scroll:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
     local query = search.Text:lower():gsub("%s+", "")
     if query == "" then return end
-    local found = 0
+    local count = 0
     for _, word in ipairs(words) do
         if word:sub(1, #query) == query and not usedWords[word] then
-            found = found + 1
+            count = count + 1
             local b = Instance.new("TextButton")
-            b.Size = UDim2.new(1, -5, 0, 32)
-            b.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
-            b.Text = "  " .. word:upper()
-            b.TextColor3 = SETTINGS.MainColor
+            b.Size = UDim2.new(1, -10, 0, 35)
+            b.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+            b.Text = "  >  " .. word:upper()
+            b.TextColor3 = Color3.new(0.9, 0.9, 0.9)
             b.Font = Enum.Font.GothamBold
+            b.TextSize = 12
             b.TextXAlignment = Enum.TextXAlignment.Left
             b.Parent = scroll
-            Instance.new("UICorner", b)
+            Instance.new("UICorner", b).CornerRadius = UDim.new(0, 6)
+            local s = Instance.new("UIStroke", b)
+            s.Color = SETTINGS.MainColor
+            s.Transparency = 0.7
+            
             b.MouseButton1Click:Connect(function()
                 usedWords[word] = true
                 sendInput(word)
                 updateList()
             end)
-            if found >= 15 then break end
+            if count >= 12 then break end
         end
     end
-    scroll.CanvasSize = UDim2.new(0,0,0, found * 38)
+    scroll.CanvasSize = UDim2.new(0, 0, 0, count * 43)
 end
 
--- [ UTILS: MINIMIZE & EFFECTS ] --
-minBtn.MouseButton1Click:Connect(function()
-    if not content.Visible then return end -- Disable saat login
-    SETTINGS.IsMinimized = not SETTINGS.IsMinimized
-    local targetSize = SETTINGS.IsMinimized and UDim2.new(0, 260, 0, 45) or UDim2.new(0, 260, 0, 420)
-    TweenService:Create(main, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
-    minBtn.Text = SETTINGS.IsMinimized and "+" or "−"
+search:GetPropertyChangedSignal("Text"):Connect(updateList)
+clearBtn.MouseButton1Click:Connect(function() search.Text = "" end)
+
+-- [ RAINBOW GLOW EFFECT ] --
+RunService.RenderStepped:Connect(function()
+    local hue = tick() % 4 / 4
+    mainStroke.Color = Color3.fromHSV(hue, 0.8, 1)
+    title.TextColor3 = Color3.fromHSV(hue, 0.6, 1)
 end)
 
-clearBtn.MouseButton1Click:Connect(function() search.Text = "" search:CaptureFocus() end)
-search:GetPropertyChangedSignal("Text"):Connect(updateList)
-
+-- [ LOAD DATABASE ] --
 task.spawn(function()
     local ok, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/ZenoScripter/Script/refs/heads/main/Sambung%20Kata%20(%20indo%20)/wordlist_kbbi.lua") end)
     if ok then for w in res:gmatch("([%a%-]+)") do if #w > 1 then table.insert(words, w:lower()) end end end
-end)
-
-RunService.RenderStepped:Connect(function()
-    local h = tick() % 5 / 5
-    stroke.Color = Color3.fromHSV(h, 0.8, 1) -- Rainbow border
-    title.TextColor3 = Color3.fromHSV(h, 0.7, 1) -- Rainbow text
 end)
