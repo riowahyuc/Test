@@ -289,6 +289,6 @@ RunService.RenderStepped:Connect(function()
 end)
 
 task.spawn(function()
-    local ok, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/ZenoScripter/Script/refs/heads/main/Sambung%20Kata%20(%20indo%20)/wordlist_kbbi.lua") end)
+    local ok, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/riowahyuc/Test/refs/heads/main/wordlist_kbbi.lua") end)
     if ok then for w in res:gmatch("([%a%-]+)") do if #w > 1 then table.insert(words, w:lower()) end end end
 end)
