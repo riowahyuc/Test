@@ -1,5 +1,5 @@
 --[[
-    🚀 Rionism x Gemini - Sambung Kata V9.4 (Mobile Optimized)
+    🚀 Rionism - Sambung Kata V9.4 (Mobile Optimized)
     Update: Ultra Slim UI, Efficient Vertical Space, & Mobile Friendly.
 ]]
 
