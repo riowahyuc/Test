@@ -26,8 +26,16 @@ local SETTINGS = {
     MinSize = UDim2.new(0, 200, 0, 40)      -- Sangat tipis saat minimize
 }
 
-local words = {}
-local usedWords = {}
+-- Tabel database & kata terpakai
+local words = {}      -- Database utama (KBBI)
+local usedWords = {}  -- Kata yang sudah digunakan
+
+-- [ LOGIC: RESET USED WORDS ] --
+local function ResetUsedWords()
+    table.clear(usedWords)
+    warn("Rionism: Daftar kata terpakai telah dikosongkan. Kata-kata lama bisa muncul kembali!")
+end
+
 
 -- [ UI SETUP ] --
 local gui = Instance.new("ScreenGui")
