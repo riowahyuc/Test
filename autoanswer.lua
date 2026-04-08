@@ -168,6 +168,29 @@ minBtn.Font = Enum.Font.GothamBold
 minBtn.Parent = header
 Instance.new("UICorner", minBtn)
 
+--- [ FITUR BARU: RESET BUTTON ] ---
+local resetBtn = Instance.new("TextButton")
+resetBtn.Name = "ResetButton"
+resetBtn.Size = UDim2.new(0.9, 0, 0, 35)
+resetBtn.Position = UDim2.new(0.05, 0, 0.85, 0)
+resetBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+resetBtn.Text = "RESET KAMUS"
+resetBtn.TextColor3 = Color3.new(1, 1, 1)
+resetBtn.Font = Enum.Font.GothamBold
+resetBtn.TextSize = 12
+resetBtn.Parent = main
+
+local resetCorner = Instance.new("UICorner")
+resetCorner.CornerRadius = UDim.new(0, 6)
+resetCorner.Parent = resetBtn
+
+resetBtn.MouseButton1Click:Connect(function()
+    ResetWordData()
+    resetBtn.Text = "DATA CLEARED!"
+    task.wait(1)
+    resetBtn.Text = "KAMUS DI RESET"
+end)
+
 -- [ MAIN APP CONTENT ] --
 local content = Instance.new("Frame")
 content.Size = UDim2.new(1, 0, 1, -40)
