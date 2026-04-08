@@ -168,27 +168,32 @@ minBtn.Font = Enum.Font.GothamBold
 minBtn.Parent = header
 Instance.new("UICorner", minBtn)
 
---- [ FITUR BARU: RESET BUTTON ] ---
-local resetBtn = Instance.new("TextButton")
-resetBtn.Name = "ResetButton"
-resetBtn.Size = UDim2.new(0.9, 0, 0, 35)
-resetBtn.Position = UDim2.new(0.05, 0, 0.85, 0)
-resetBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-resetBtn.Text = "RESET KAMUS"
-resetBtn.TextColor3 = Color3.new(1, 1, 1)
-resetBtn.Font = Enum.Font.GothamBold
-resetBtn.TextSize = 12
-resetBtn.Parent = main
+-- Tombol Reset Kamus Terpakai
+local resetUsedBtn = Instance.new("TextButton")
+resetUsedBtn.Name = "ResetUsedBtn"
+resetUsedBtn.Size = UDim2.new(0.9, 0, 0, 35)
+resetUsedBtn.Position = UDim2.new(0.05, 0, 0.8, 0) -- Letakkan di bawah
+resetUsedBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 200)
+resetUsedBtn.Text = "RESET KAMUS"
+resetUsedBtn.TextColor3 = Color3.new(1, 1, 1)
+resetUsedBtn.Font = Enum.Font.GothamBold
+resetUsedBtn.TextSize = 11
+resetUsedBtn.Parent = main
 
-local resetCorner = Instance.new("UICorner")
-resetCorner.CornerRadius = UDim.new(0, 6)
-resetCorner.Parent = resetBtn
+local btnCorner = Instance.new("UICorner")
+btnCorner.CornerRadius = UDim.new(0, 6)
+btnCorner.Parent = resetUsedBtn
 
-resetBtn.MouseButton1Click:Connect(function()
-    ResetWordData()
-    resetBtn.Text = "DATA CLEARED!"
-    task.wait(1)
-    resetBtn.Text = "KAMUS DI RESET"
+-- Efek Klik
+resetUsedBtn.MouseButton1Click:Connect(function()
+    ResetUsedWords()
+    resetUsedBtn.Text = "WORDS REFRESHED!"
+    resetUsedBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
+    
+    task.wait(1.5)
+    
+    resetUsedBtn.Text = "RESET KAMUS"
+    resetUsedBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 200)
 end)
 
 -- [ MAIN APP CONTENT ] --
