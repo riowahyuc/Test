@@ -31,7 +31,7 @@ local usedWords = {}
 
 -- [ UI SETUP ] --
 local gui = Instance.new("ScreenGui")
-gui.Name = "RionismXGemini_V9_4"
+gui.Name = "RionismSBK_V0_1"
 gui.ResetOnSpawn = false
 gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
@@ -101,7 +101,7 @@ Instance.new("UICorner", loginFrame)
 local loginTitle = Instance.new("TextLabel")
 loginTitle.Size = UDim2.new(1, 0, 0, 60)
 loginTitle.BackgroundTransparency = 1
-loginTitle.Text = "RIONISM X GEMINI"
+loginTitle.Text = "RIONISM SAMBUNG KATA V.01"
 loginTitle.TextColor3 = Color3.new(1, 1, 1)
 loginTitle.Font = Enum.Font.GothamBold
 loginTitle.TextSize = 13
@@ -151,7 +151,7 @@ local title = Instance.new("TextLabel")
 title.Size = UDim2.new(1, -50, 1, 0)
 title.Position = UDim2.new(0, 10, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "RION X GEMINI"
+title.Text = "Rionism v0.1"
 title.TextColor3 = SETTINGS.MainColor
 title.Font = Enum.Font.GothamBold
 title.TextSize = 11
@@ -294,7 +294,7 @@ speedInput.FocusLost:Connect(function()
 end)
 
 task.spawn(function()
-    local ok, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/ZenoScripter/Script/refs/heads/main/Sambung%20Kata%20(%20indo%20)/wordlist_kbbi.lua") end)
+    local ok, res = pcall(function() return game:HttpGet("https://raw.githubusercontent.com/riowahyuc/Test/refs/heads/main/wordlist_kbbi.lua") end)
     if ok then for w in res:gmatch("([%a%-]+)") do if #w > 1 then table.insert(words, w:lower()) end end end
 end)
 
