@@ -30,12 +30,11 @@ local SETTINGS = {
 local words = {}      -- Database utama (KBBI)
 local usedWords = {}  -- Kata yang sudah digunakan
 
--- [ LOGIC: RESET USED WORDS ] --
+-- [ FEATURE: RESET USED WORDS ] --
 local function ResetUsedWords()
     table.clear(usedWords)
-    warn("Rionism: Daftar kata terpakai telah dikosongkan. Kata-kata lama bisa muncul kembali!")
+    print("Rionism: Used words have been reset!")
 end
-
 
 -- [ UI SETUP ] --
 local gui = Instance.new("ScreenGui")
@@ -45,18 +44,55 @@ gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local main = Instance.new("Frame")
 main.Size = SETTINGS.DefaultSize
-main.Position = UDim2.new(0.5, -100, 0.3, 0) -- Posisi lebih ke atas agar tidak tertutup keyboard
+main.Position = UDim2.new(0.5, -100, 0.3, 0)
 main.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
 main.BorderSizePixel = 0
 main.Active = true
 main.Draggable = true
-main.ClipsDescendants = true
 main.Parent = gui
 
-local corner = Instance.new("UICorner", main)
-local stroke = Instance.new("UIStroke", main)
-stroke.Thickness = 2
-stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+-- Rounded Corner
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = main
+
+-- Title Bar
+local title = Instance.new("TextLabel")
+title.Size = UDim2.new(1, 0, 0, 35)
+title.BackgroundTransparency = 1
+title.Text = "RIONISM V9.4"
+title.TextColor3 = SETTINGS.MainColor
+title.TextSize = 14
+title.Font = Enum.Font.GothamBold
+title.Parent = main
+
+-- [ RESET BUTTON ] --
+local resetBtn = Instance.new("TextButton")
+resetBtn.Name = "ResetButton"
+resetBtn.Size = UDim2.new(0.9, 0, 0, 35)
+resetBtn.Position = UDim2.new(0.05, 0, 0.85, 0) -- Di bagian bawah agar mobile friendly
+resetBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+resetBtn.Text = "RESET USED WORDS"
+resetBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+resetBtn.Font = Enum.Font.GothamBold
+resetBtn.TextSize = 11
+resetBtn.Parent = main
+
+local resetCorner = Instance.new("UICorner")
+resetCorner.CornerRadius = UDim.new(0, 6)
+resetCorner.Parent = resetBtn
+
+local resetStroke = Instance.new("UIStroke")
+resetStroke.Color = SETTINGS.MainColor
+resetStroke.Thickness = 1
+resetStroke.Parent = resetBtn
+
+resetBtn.MouseButton1Click:Connect(function()
+    ResetUsedWords()
+    resetBtn.Text = "SUCCESS!"
+    task.wait(1)
+    resetBtn.Text = "RESET USED WORDS"
+end)
 
 -- [ RESIZE GRIP ] --
 local resizeGrip = Instance.new("Frame")
@@ -176,33 +212,6 @@ minBtn.Font = Enum.Font.GothamBold
 minBtn.Parent = header
 Instance.new("UICorner", minBtn)
 
--- Tombol Reset Kamus Terpakai
-local resetUsedBtn = Instance.new("TextButton")
-resetUsedBtn.Name = "ResetUsedBtn"
-resetUsedBtn.Size = UDim2.new(0.9, 0, 0, 35)
-resetUsedBtn.Position = UDim2.new(0.05, 0, 0.8, 0) -- Letakkan di bawah
-resetUsedBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 200)
-resetUsedBtn.Text = "RESET KAMUS"
-resetUsedBtn.TextColor3 = Color3.new(1, 1, 1)
-resetUsedBtn.Font = Enum.Font.GothamBold
-resetUsedBtn.TextSize = 11
-resetUsedBtn.Parent = main
-
-local btnCorner = Instance.new("UICorner")
-btnCorner.CornerRadius = UDim.new(0, 6)
-btnCorner.Parent = resetUsedBtn
-
--- Efek Klik
-resetUsedBtn.MouseButton1Click:Connect(function()
-    ResetUsedWords()
-    resetUsedBtn.Text = "WORDS REFRESHED!"
-    resetUsedBtn.BackgroundColor3 = Color3.fromRGB(0, 200, 100)
-    
-    task.wait(1.5)
-    
-    resetUsedBtn.Text = "RESET KAMUS"
-    resetUsedBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 200)
-end)
 
 -- [ MAIN APP CONTENT ] --
 local content = Instance.new("Frame")
