@@ -1,12 +1,13 @@
 --[[
-    🚀 Rionism x Gemini - Sambung Kata V9.2 (Final Legacy Edition)
-    Fitur: Daily Key, Copy Link Button, Refresh Data, Credits, & UI Vertikal.
+    🚀 Rionism x Gemini - Sambung Kata V9.4 (Optimized & Responsive)
+    Update: Slim UI, Ultra Responsive Minimize, & Stable Resizing.
 ]]
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local VirtualInputManager = game:GetService("VirtualInputManager")
 local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
 local LocalPlayer = Players.LocalPlayer
 
 -- [ LOGIC: DAILY KEY ] --
@@ -17,10 +18,12 @@ end
 
 local SETTINGS = {
     MainColor = Color3.fromRGB(0, 212, 255),
-    KeyLink = "https://link-rionism-gemini.com/getkey", -- Ganti dengan link kamu
+    KeyLink = "https://link-rionism-gemini.com/getkey",
     CorrectKey = GetDailyKey(),
     TypingDelay = 0.05,
-    IsMinimized = false
+    IsMinimized = false,
+    DefaultSize = UDim2.new(0, 230, 0, 420), -- Lebar diperkecil ke 230
+    MinSize = UDim2.new(0, 230, 0, 45)
 }
 
 local words = {}
@@ -28,13 +31,13 @@ local usedWords = {}
 
 -- [ UI SETUP ] --
 local gui = Instance.new("ScreenGui")
-gui.Name = "RionismXGemini_V9_2"
+gui.Name = "RionismXGemini_V9_4"
 gui.ResetOnSpawn = false
 gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
 local main = Instance.new("Frame")
-main.Size = UDim2.new(0, 260, 0, 400)
-main.Position = UDim2.new(0.5, -130, 0.4, -200)
+main.Size = SETTINGS.DefaultSize
+main.Position = UDim2.new(0.5, -115, 0.4, -210)
 main.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
 main.BorderSizePixel = 0
 main.Active = true
@@ -42,10 +45,46 @@ main.Draggable = true
 main.ClipsDescendants = true
 main.Parent = gui
 
-Instance.new("UICorner", main)
+local corner = Instance.new("UICorner", main)
 local stroke = Instance.new("UIStroke", main)
 stroke.Thickness = 2
 stroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+-- [ RESIZE GRIP (POJOK KANAN BAWAH) ] --
+local resizeGrip = Instance.new("Frame")
+resizeGrip.Size = UDim2.new(0, 12, 0, 12)
+resizeGrip.Position = UDim2.new(1, -12, 1, -12)
+resizeGrip.BackgroundTransparency = 0.3
+resizeGrip.BackgroundColor3 = SETTINGS.MainColor
+resizeGrip.ZIndex = 20
+resizeGrip.Parent = main
+Instance.new("UICorner", resizeGrip).CornerRadius = UDim.new(1, 0)
+
+local resizing = false
+resizeGrip.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then resizing = true end
+end)
+
+UserInputService.InputChanged:Connect(function(input)
+    if resizing and input.UserInputType == Enum.UserInputType.MouseMovement then
+        local mousePos = UserInputService:GetMouseLocation()
+        local newWidth = math.max(200, mousePos.X - main.AbsolutePosition.X)
+        local newHeight = math.max(150, mousePos.Y - main.AbsolutePosition.Y)
+        if not SETTINGS.IsMinimized then
+            main.Size = UDim2.new(0, newWidth, 0, newHeight)
+        end
+    end
+end)
+
+UserInputService.InputEnded:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then resizing = false end
+end)
+
+-- [ CONTENT HOLDER ] --
+local holder = Instance.new("Frame")
+holder.Size = UDim2.new(1, 0, 1, 0)
+holder.BackgroundTransparency = 1
+holder.Parent = main
 
 -- [ LOGIN FRAME + COPY LINK ] --
 local loginFrame = Instance.new("Frame")
@@ -102,14 +141,13 @@ Instance.new("UICorner", getBtn)
 local header = Instance.new("Frame")
 header.Size = UDim2.new(1, 0, 0, 45)
 header.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-header.Parent = main
-Instance.new("UICorner", header)
+header.Parent = holder
 
 local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, -60, 1, 0)
-title.Position = UDim2.new(0, 12, 0, 0)
+title.Size = UDim2.new(1, -50, 1, 0)
+title.Position = UDim2.new(0, 10, 0, 0)
 title.BackgroundTransparency = 1
-title.Text = "RIONISM X GEMINI V9.2"
+title.Text = "RION X GEMINI V9.4"
 title.TextColor3 = SETTINGS.MainColor
 title.Font = Enum.Font.GothamBold
 title.TextSize = 12
@@ -117,94 +155,83 @@ title.TextXAlignment = Enum.TextXAlignment.Left
 title.Parent = header
 
 local minBtn = Instance.new("TextButton")
-minBtn.Size = UDim2.new(0, 40, 0, 35)
-minBtn.Position = UDim2.new(1, -45, 0, 5)
-minBtn.BackgroundColor3 = Color3.fromRGB(35, 35, 45)
+minBtn.Size = UDim2.new(0, 35, 0, 30)
+minBtn.Position = UDim2.new(1, -40, 0, 7)
+minBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
 minBtn.Text = "−"
 minBtn.TextColor3 = Color3.new(1, 1, 1)
 minBtn.Font = Enum.Font.GothamBold
-minBtn.TextSize = 22
 minBtn.Parent = header
 Instance.new("UICorner", minBtn)
 
+-- [ MAIN APP CONTENT ] --
 local content = Instance.new("Frame")
 content.Size = UDim2.new(1, 0, 1, -45)
 content.Position = UDim2.new(0, 0, 0, 45)
 content.BackgroundTransparency = 1
 content.Visible = false
-content.Parent = main
+content.Parent = holder
 
--- [ SEARCH & ACTION BUTTONS ] --
-local searchFrame = Instance.new("Frame")
-searchFrame.Size = UDim2.new(1, -20, 0, 38)
-searchFrame.Position = UDim2.new(0, 10, 0, 10)
-searchFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
-searchFrame.Parent = content
-Instance.new("UICorner", searchFrame)
+-- Speed Setting
+local speedLabel = Instance.new("TextLabel")
+speedLabel.Size = UDim2.new(1, -20, 0, 20)
+speedLabel.Position = UDim2.new(0, 10, 0, 5)
+speedLabel.Text = "Typing Delay: 0.05s"
+speedLabel.TextColor3 = Color3.new(0.7,0.7,0.7)
+speedLabel.Font = Enum.Font.Gotham
+speedLabel.TextSize = 10
+speedLabel.BackgroundTransparency = 1
+speedLabel.Parent = content
 
+local speedInput = Instance.new("TextBox")
+speedInput.Size = UDim2.new(1, -20, 0, 25)
+speedInput.Position = UDim2.new(0, 10, 0, 25)
+speedInput.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+speedInput.Text = "0.05"
+speedInput.TextColor3 = SETTINGS.MainColor
+speedInput.Parent = content
+Instance.new("UICorner", speedInput)
+
+-- Search
 local search = Instance.new("TextBox")
-search.Size = UDim2.new(1, -40, 1, 0)
-search.Position = UDim2.new(0, 10, 0, 0)
-search.BackgroundTransparency = 1
-search.PlaceholderText = "Input Awalan..."
-search.Text = ""
+search.Size = UDim2.new(1, -20, 0, 35)
+search.Position = UDim2.new(0, 10, 0, 60)
+search.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+search.PlaceholderText = "Awalan Kata..."
 search.TextColor3 = Color3.new(1, 1, 1)
-search.Parent = searchFrame
+search.Parent = content
+Instance.new("UICorner", search)
 
-local clearBtn = Instance.new("TextButton")
-clearBtn.Size = UDim2.new(0, 25, 0, 25)
-clearBtn.Position = UDim2.new(1, -30, 0.5, -12)
-clearBtn.BackgroundColor3 = Color3.fromRGB(40, 20, 20)
-clearBtn.Text = "×"
-clearBtn.TextColor3 = Color3.new(1, 0.3, 0.3)
-clearBtn.Font = Enum.Font.GothamBold
-clearBtn.Parent = searchFrame
-Instance.new("UICorner", clearBtn)
-
-local actionFrame = Instance.new("Frame")
-actionFrame.Size = UDim2.new(1, -20, 0, 30)
-actionFrame.Position = UDim2.new(0, 10, 0, 55)
-actionFrame.BackgroundTransparency = 1
-actionFrame.Parent = content
-
-local refreshBtn = Instance.new("TextButton")
-refreshBtn.Size = UDim2.new(0, 115, 1, 0)
-refreshBtn.BackgroundColor3 = Color3.fromRGB(30, 35, 30)
-refreshBtn.Text = "REFRESH"
-refreshBtn.TextColor3 = Color3.fromRGB(150, 255, 150)
-refreshBtn.Font = Enum.Font.GothamBold
-refreshBtn.TextSize = 10
-refreshBtn.Parent = actionFrame
-Instance.new("UICorner", refreshBtn)
-
-local creditsBtn = Instance.new("TextButton")
-creditsBtn.Size = UDim2.new(0, 115, 1, 0)
-creditsBtn.Position = UDim2.new(1, -115, 0, 0)
-creditsBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
-creditsBtn.Text = "CREDITS"
-creditsBtn.TextColor3 = Color3.new(1,1,1)
-creditsBtn.Font = Enum.Font.GothamBold
-creditsBtn.TextSize = 10
-creditsBtn.Parent = actionFrame
-Instance.new("UICorner", creditsBtn)
-
--- [ LIST KATA ] --
 local scroll = Instance.new("ScrollingFrame")
-scroll.Size = UDim2.new(1, -20, 1, -100)
-scroll.Position = UDim2.new(0, 10, 0, 95)
+scroll.Size = UDim2.new(1, -20, 1, -110)
+scroll.Position = UDim2.new(0, 10, 0, 105)
 scroll.BackgroundTransparency = 1
 scroll.ScrollBarThickness = 2
 scroll.Parent = content
-Instance.new("UIListLayout", scroll).Padding = UDim.new(0, 6)
+Instance.new("UIListLayout", scroll).Padding = UDim.new(0, 5)
 
--- [ LOGIC: BUTTONS & SECURITY ] --
-getBtn.MouseButton1Click:Connect(function()
-    if setclipboard then
-        setclipboard(SETTINGS.KeyLink)
-        getBtn.Text = "LINK COPIED!"
-        task.wait(1.5)
-        getBtn.Text = "GET KEY (COPY LINK)"
+-- [ LOGIC FUNCTIONS ] --
+minBtn.MouseButton1Click:Connect(function()
+    SETTINGS.IsMinimized = not SETTINGS.IsMinimized
+    local targetSize = SETTINGS.IsMinimized and SETTINGS.MinSize or SETTINGS.DefaultSize
+    
+    if SETTINGS.IsMinimized then
+        content.Visible = false
+        resizeGrip.Visible = false
+        minBtn.Text = "+"
+    else
+        minBtn.Text = "−"
     end
+
+    local tween = TweenService:Create(main, TweenInfo.new(0.3, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize})
+    tween:Play()
+    
+    tween.Completed:Connect(function()
+        if not SETTINGS.IsMinimized then 
+            content.Visible = true 
+            resizeGrip.Visible = true
+        end
+    end)
 end)
 
 checkBtn.MouseButton1Click:Connect(function()
@@ -212,28 +239,20 @@ checkBtn.MouseButton1Click:Connect(function()
         loginFrame.Visible = false
         content.Visible = true
     else
-        checkBtn.Text = "INVALID DAILY KEY"
-        checkBtn.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-        task.wait(1.5)
-        checkBtn.Text = "VERIFY KEY"
-        checkBtn.BackgroundColor3 = SETTINGS.MainColor
+        checkBtn.Text = "WRONG KEY!"
+        task.wait(1)
+        checkBtn.Text = "VERIFY"
     end
 end)
 
-refreshBtn.MouseButton1Click:Connect(function()
-    usedWords = {}
-    refreshBtn.Text = "DATA RESET!"
-    task.wait(1)
-    refreshBtn.Text = "REFRESH"
+speedInput.FocusLost:Connect(function()
+    local val = tonumber(speedInput.Text)
+    if val then
+        SETTINGS.TypingDelay = math.clamp(val, 0, 2)
+        speedLabel.Text = "Typing Delay: "..SETTINGS.TypingDelay.."s"
+    end
 end)
 
-creditsBtn.MouseButton1Click:Connect(function()
-    creditsBtn.Text = "DEV: RIONISM"
-    task.wait(2)
-    creditsBtn.Text = "CREDITS"
-end)
-
--- [ LOGIC: CORE ENGINE ] --
 local function sendInput(word)
     local prefix = search.Text:lower():gsub("%s+", "")
     local suffix = word:sub(#prefix + 1)
@@ -258,11 +277,12 @@ local function updateList()
         if word:sub(1, #query) == query and not usedWords[word] then
             found = found + 1
             local b = Instance.new("TextButton")
-            b.Size = UDim2.new(1, -5, 0, 32)
-            b.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
+            b.Size = UDim2.new(1, -5, 0, 30)
+            b.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
             b.Text = "  " .. word:upper()
             b.TextColor3 = SETTINGS.MainColor
             b.Font = Enum.Font.GothamBold
+            b.TextSize = 11
             b.TextXAlignment = Enum.TextXAlignment.Left
             b.Parent = scroll
             Instance.new("UICorner", b)
@@ -271,22 +291,12 @@ local function updateList()
                 sendInput(word)
                 updateList()
             end)
-            if found >= 15 then break end
+            if found >= 12 then break end
         end
     end
-    scroll.CanvasSize = UDim2.new(0,0,0, found * 38)
+    scroll.CanvasSize = UDim2.new(0, 0, 0, found * 35)
 end
 
--- [ UTILS ] --
-minBtn.MouseButton1Click:Connect(function()
-    if not content.Visible then return end
-    SETTINGS.IsMinimized = not SETTINGS.IsMinimized
-    local targetSize = SETTINGS.IsMinimized and UDim2.new(0, 260, 0, 45) or UDim2.new(0, 260, 0, 400)
-    TweenService:Create(main, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {Size = targetSize}):Play()
-    minBtn.Text = SETTINGS.IsMinimized and "+" or "−"
-end)
-
-clearBtn.MouseButton1Click:Connect(function() search.Text = "" search:CaptureFocus() end)
 search:GetPropertyChangedSignal("Text"):Connect(updateList)
 
 task.spawn(function()
@@ -298,6 +308,7 @@ RunService.RenderStepped:Connect(function()
     local h = tick() % 5 / 5
     stroke.Color = Color3.fromHSV(h, 0.8, 1)
     title.TextColor3 = Color3.fromHSV(h, 0.7, 1)
+    resizeGrip.BackgroundColor3 = Color3.fromHSV(h, 0.8, 1)
 end)
 
-print("Rionism x Gemini V9.2 Loaded - Daily Key is: " .. SETTINGS.CorrectKey)
+print("Rionism x Gemini V9.4 Loaded!")
