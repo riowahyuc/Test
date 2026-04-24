@@ -1,0 +1,3362 @@
+
+local arch = gg.getTargetInfo().x64
+
+--cod tabela china edu
+function getFloat(b)if b then gg.searchNumber(b,16)if gg.getResultsCount()>0 then a=tonumber(gg.getResults(gg.getResultsCount())[1].value)gg.clearResults()return a end end end;function getDouble(c)if c then gg.searchNumber(c,16)if gg.getResultsCount()>0 then a=tonumber(gg.getResults(gg.getResultsCount())[1].value)gg.clearResults()return a end end end;function getQword(d)if d then gg.searchNumber(d,16)if gg.getResultsCount()>0 then a=tonumber(gg.getResults(gg.getResultsCount())[1].value)gg.clearResults()return a end end end;function getXor(e)if e then gg.searchNumber(e,16)if gg.getResultsCount()>0 then a=tonumber(gg.getResults(gg.getResultsCount())[1].value)gg.clearResults()return a end end end;function SearchGet(f,g,h)if f and g and not h then h=g;g=nil end;if not f then f=gg.REGION_ANONYMOUS else function getRanges(i)if i then rangesIds={{"Jh","gg.REGION_JAVA_HEAP"},{"Ch","gg.REGION_C_HEAP"},{"Ca","gg.REGION_C_ALLOC"},{"Cd","gg.REGION_C_DATA"},{"Cb","gg.REGION_C_BSS"},{"PS","gg.REGION_PPSSPP"},{"A","gg.REGION_ANONYMOUS"},{"J","gg.REGION_JAVA"},{"S","gg.REGION_STACK"},{"As","gg.REGION_ASHMEM"},{"V","gg.REGION_VIDEO"},{"O","gg.REGION_OTHER"},{"B","gg.REGION_BAD"},{"Xa","gg.REGION_CODE_APP"},{"Xs","gg.REGION_CODE_SYS"}}returnRange=nil;for j,k in pairs(rangesIds)do if i:match("|")then if i:match(k[1].." ")or i:match(" "..k[1])then returnRange=returnRange or""returnRange=returnRange:gsub(k[1],k[2])break end else if i==k[1]then returnRange=k[2]break end end end;return returnRange end end;f=getRanges(f)if f then gg.setRanges(load("return "..f)())gg.clearResults()gg.setVisible(false)if g then flagsIds={{"d",gg.TYPE_DWORD},{"f",gg.TYPE_FLOAT},{"e",gg.TYPE_DOUBLE},{"w",gg.TYPE_WORD},{"b",gg.TYPE_BYTE},{"q",gg.TYPE_QWORD},{"x",gg.TYPE_XOR}}for j,k in pairs(flagsIds)do if g==k[1]then g=k[2]end end;if type(g)=="number"then gg.searchNumber(h[1][1],g)count=gg.getResultCount()result=gg.getResults(count)gg.clearResults()data={}base=h[1][2]if count>0 then for j,k in ipairs(result)do k.isUseful=true end;for l=2,#h do tmp={}offset=h[l][2]-base;num=h[l][1]for j,k in ipairs(result)do tmp[#tmp+1]={address=k.address+offset,flags=k.flags}end;tmp=gg.getValues(tmp)for j,k in ipairs(tmp)do if tostring(k.value)~=tostring(num)then result[j].isUseful=false end end end;for j,k in ipairs(result)do if k.isUseful then data[#data+1]={address=k.address,flags=k.flags}end end;if#data>0 then gg.clearList()gg.clearResults()gg.loadResults(data)return data else gg.toast("[ERROR]: não encontrou nenhum resultado na pesquisa.")end else gg.toast("[ERROR]: não encontrou nenhum resultado na pesquisa.")end else gg.alert("[ERROR]: flag não definida!")return end else flagsIds={{"d",gg.TYPE_DWORD},{"f",gg.TYPE_FLOAT},{"e",gg.TYPE_DOUBLE},{"w",gg.TYPE_WORD},{"b",gg.TYPE_BYTE},{"q",gg.TYPE_QWORD},{"x",gg.TYPE_XOR}}for m,j in pairs(h)do for m,k in pairs(flagsIds)do if j[3]==k[1]then j[3]=k[2]end end;if type(h[1][3])~="number"then gg.alert("[ERROR]: flag não definida!")return end end;gg.searchNumber(h[1][1],f[3])count=gg.getResultCount()result=gg.getResults(count)gg.clearResults()data={}base=h[1][2]if count>0 then for j,k in ipairs(result)do k.isUseful=true end;for l=2,#h do tmp={}offset=h[l][2]-base;num=h[l][1]for j,k in ipairs(result)do tmp[#tmp+1]={address=k.address+offset,flags=h[l][3]}end;tmp=gg.getValues(tmp)for j,k in ipairs(tmp)do if tostring(k.value)~=tostring(num)then result[j].isUseful=false end end end;for j,k in ipairs(result)do if k.isUseful then data[#data+1]={address=k.address,flags=k.flags}end end;if#data>0 then gg.clearList()gg.clearResults()gg.loadResults(data)return data else gg.toast("[ERROR]: não encontrou nenhum resultado na pesquisa.")end else gg.toast("[ERROR]: não encontrou nenhum resultado na pesquisa.")end end else gg.alert("[ERROR]: range não definida!")return end end end;function editGet(n,o,p)if n then if o then if p then flagsIds={{"d",gg.TYPE_DWORD},{"f",gg.TYPE_FLOAT},{"e",gg.TYPE_DOUBLE},{"w",gg.TYPE_WORD},{"b",gg.TYPE_BYTE},{"q",gg.TYPE_QWORD},{"x",gg.TYPE_XOR}}for j,k in pairs(flagsIds)do if p==k[1]then p=k[2]end end;if type(p)=="number"then edits={}for m,k in pairs(o)do for m,j in pairs(n)do edits[#edits+1]={address=j.address+k[2],value=k[1],flags=p}end end;gg.setValues(edits)return edits else gg.alert("[ERROR]: flag não definida!")return end else flagsIds={{"d",gg.TYPE_DWORD},{"f",gg.TYPE_FLOAT},{"e",gg.TYPE_DOUBLE},{"w",gg.TYPE_WORD},{"b",gg.TYPE_BYTE},{"q",gg.TYPE_QWORD},{"x",gg.TYPE_XOR}}for m,a in pairs(flagsIds)do for m,q in pairs(o)do if q[3]==a[1]then q[3]=a[2]end end end;if type(o[1][3])~="number"then gg.alert("[ERROR]: flag não definida!")return end;edits={}for m,k in pairs(o)do for m,j in pairs(n)do edits[#edits+1]={address=j.address+k[2],value=k[1],flags=k[3]}end end;gg.setValues(edits)return edits end end end end
+
+
+ function loop(fun, const)
+    gg.setVisible(true)
+	while true do
+		if gg.isVisible() then
+			gg.setVisible(false)
+			if fun() == const then
+				break
+			end
+		end
+	end
+ end
+
+
+
+ function Main()
+ menu = gg.choice({
+                     
+                      " 𝐅𝐔𝐍𝐂̧𝐎̃𝐄𝐒 𝐔́𝐓𝐄𝐈𝐒 𝐀𝐁𝐀𝐈𝐗𝐎",
+                      " ┊║║║║║║║║┊",
+                      " 𝐆𝐎𝐃𝐌𝐎𝐃",
+                      " 𝐀𝐑𝐌𝐀𝐒",
+                      " 👇🏻𝐂𝐋𝐈𝐊𝐄 𝐀𝐁𝐀𝐈𝐗𝐎",
+                      " 〖𝐅𝐔𝐑𝐈𝐀 𝐌𝐄𝐍𝐔〗",
+                      "        ",
+                      "《✘》𝐂𝐋𝐎𝐒𝐄 𝐌𝐎𝐃"}, nil,
+ "┏━─────────▄︻̷̿┻̿═━一──────━┓\n               ▬ι═ﺤ𝙁𝙐𝙍𝙄𝘼 𝙈𝙊𝘿𝙕▬ι═ﺤ  \n                       \n                   \n ┗━────────▄︻̷̿┻̿═━一──────━┛\n")
+
+
+
+  if menu == 1 then loop(empregos,'tele') end
+  if menu == 2 then loop(locaispb,'locaispb') end
+  if menu == 3 then vida() end
+  if menu == 4 then weaponchanger() end
+  if menu == 5 then loop(TpFarm,"FARM") end
+  if menu == 6 then loop(menupremium,"prem") end
+  if menu == 7 then menuAutoFarmMina() end
+  if menu == 8 then os.exit() end
+  MAINLUA = -1				
+ end
+
+
+
+
+
+ function empregos()
+   if not LoadTP or #LoadTP == 0 then
+      dados_local() -- Carregar dados
+   end
+
+   if not LoadTP or #LoadTP == 0 then
+      gg.alert("Erro: LoadTP está vazio após tentar carregar.")
+      return
+   end
+
+   menu = gg.choice({
+      "《🚇》《𝐓𝐏 𝐒𝐏𝐀𝐖𝐍(𝐌𝐄𝐓𝐑𝐎)》",
+      "《🏥》《𝐓𝐏 𝐇𝐎𝐒𝐏𝐈𝐓𝐀𝐋》",
+      "《☢️》《𝐓𝐏 𝐌𝐈𝐍𝐄𝐑𝐀𝐃𝐎𝐑𝐀》",
+      "《🚜》《𝐓𝐏 𝐅𝐀𝐙𝐄𝐍𝐃𝐈𝐍𝐇𝐀》",
+      "《↩️》𝐕𝐎𝐋𝐓𝐀𝐑"
+   }, nil, "┏━────────────╯⌬╰────────────━┓\n                           🇧🇷TELEPORTE🇧🇷  \n                   \n ┗━────────────╮⌬╭────────────━┛\n")
+
+   if menu == 1 then metro() end
+   if menu == 2 then hospital() end
+   if menu == 3 then mina() end
+   if menu == 4 then fazenda() end
+   if menu == 5 then loop(Main, "Main") end
+   
+   MAINLUA = -1	
+end
+
+function locaispb()
+   if not LoadTP or #LoadTP == 0 then
+      dados_local() -- Carregar dados
+   end
+
+   if not LoadTP or #LoadTP == 0 then
+      gg.alert("Erro: LoadTP está vazio após tentar carregar.")
+      return
+   end
+   
+   menu = gg.choice({
+      
+      "《🏨》《𝐓𝐏 𝐌𝐎𝐓𝐄𝐋》",
+      "《🚗》《𝐓𝐏 𝐂𝐎𝐍𝐂𝐄𝐒𝐒𝐈𝐎𝐍𝐀𝐑𝐈𝐀》",
+      "《🏠》《𝐓𝐏 𝐋𝐄𝐈𝐋𝐎𝐄𝐒》",
+      "《🔧》《𝐓𝐏 𝐌𝐎𝐍𝐓𝐀𝐆𝐄𝐌 𝐃𝐄 𝐏𝐍𝐄𝐔》",
+      "《🎨》《𝐓𝐏 𝐂𝐄𝐍𝐓𝐑𝐎 𝐃𝐄 𝐄𝐒𝐓𝐈𝐋𝐈𝐙𝐀𝐂𝐀𝐎》",
+      "《🛠️》《𝐓𝐏 𝐂𝐄𝐍𝐓𝐑𝐎 𝐃𝐄 𝐒𝐄𝐑𝐕𝐈𝐂𝐎𝐒》",
+      "《🏍️》《𝐓𝐏 𝐋𝐎𝐉𝐀 𝐃𝐄 𝐌𝐎𝐓𝐎》",
+      "《🚘》《𝐓𝐏 𝐂𝐎𝐍𝐂𝐄𝐒𝐒𝐈𝐎𝐍𝐀𝐑𝐈𝐀 𝐃𝐄 𝐑𝐈𝐂𝐎》",
+      "《🚙》《𝐓𝐏 𝐂𝐎𝐍𝐂𝐄𝐒𝐒𝐈𝐎𝐍𝐀𝐑𝐈𝐀 𝐌𝐄𝐃𝐈𝐀》",
+      "《🚗》《𝐓𝐏 𝐂𝐎𝐍𝐂𝐄𝐒𝐒𝐈𝐎𝐍𝐀𝐑𝐈𝐀 𝐃𝐄 𝐏𝐎𝐁𝐑𝐄》",
+      "《⛪》《𝐓𝐏 𝐈𝐆𝐑𝐄𝐉𝐀 𝐃𝐄  𝐃𝐄𝐔𝐒》",
+      "《🛒》《𝐓𝐏 𝐁𝐀𝐑𝐑𝐀𝐂𝐀 𝐃𝐄 𝐀𝐂𝐄𝐒𝐒𝐎𝐑𝐈𝐎𝐒》",
+      "《🏫》《𝐓𝐏 𝐀𝐔𝐓𝐎 𝐄𝐒𝐂𝐎𝐋𝐀》",
+      "《🏛️》《𝐓𝐏 𝐏𝐑𝐄𝐅𝐄𝐈𝐓𝐔𝐑𝐀》",
+      "《↩️》𝐕𝐎𝐋𝐓𝐀𝐑"
+  }, nil, "┏━────────────╯⌬╰────────────━┓\n                           🇧🇷TELEPORTE🇧🇷  \n                   \n ┗━────────────╮⌬╭────────────━┛\n")
+  
+  if menu == 1 then hotel() end
+  if menu == 2 then mercado_de_carros() end
+  if menu == 3 then casa_de_leiloes() end
+  if menu == 4 then centro_de_montagem_de_pneus() end
+  if menu == 5 then centro_de_estilizacao() end
+  if menu == 6 then centro_de_servicos() end
+  if menu == 7 then loja_de_motos_bicicletas() end
+  if menu == 8 then concessionaria_premium() end
+  if menu == 9 then concessionaria_classe_media() end
+  if menu == 10 then concessionaria_economica() end
+  if menu == 11 then igreja() end
+  if menu == 12 then mercado_de_acessorios() end
+  if menu == 13 then escola_de_conducao() end
+  if menu == 14 then prefeitura() end
+  if menu == 15 then loop(Main, "Main") end
+  
+  MAINLUA = -1
+end  
+
+
+
+
+
+ function dados_local()
+   --Posição do player
+ player_position = {
+	{1158239360, 0},
+	{1154044736, 0x4},
+    {1148842240, 0x8},
+ }
+
+ a = SearchGet("Ca","d", player_position)
+
+ gg.addListItems(a)
+ gg.loadResults(gg.getListItems())
+ LoadTP = gg.getResults(100)
+ gg.toast("Carregado com sucesso")
+
+ end
+ 
+ 
+
+
+ function weaponchanger()
+   if not guns or #guns == 0 then
+      weaponbase() -- Carregar dados
+   end
+
+   if not guns or #guns == 0 then
+      gg.alert("Erro: LoadTP está vazio após tentar carregar.")
+      return
+   end
+
+   menu = gg.choice({
+      "《🗡️》《Armas Brancas》",
+      "《🔫》《Pistolas》",
+      "《🔫》《Espingardas》",
+      "《🔫》《Submetralhadoras》",
+      "《🔫》《Fuzis》", 
+      "《🔫》《Rifles》",
+      "《💣》《Pesadas》",
+      "《🎯》《Especiais》",
+      "《🧨》《Projéteis》",
+      "《📸》《Itens Especiais》",
+      "《🎁》《Presentes》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷PUXAR ARMAS🇧🇷")
+
+   if menu == 1 then loop(w_brancas, "brancas") end
+   if menu == 2 then loop(w_pistolas, "pts") end
+   if menu == 3 then loop(w_escopeta, "doze") end
+   if menu == 4 then loop(w_sub, "sub") end
+   if menu == 5 then loop(w_fuzis, "fuzis") end
+   if menu == 6 then loop(w_rifle, "rifle") end
+   if menu == 7 then loop(w_pesadas, "pesadas") end
+   if menu == 8 then loop(w_especiais, "esp") end
+   if menu == 9 then loop(w_projeteis, "proj") end
+   if menu == 10 then loop(w_itens, "itens") end
+   if menu == 11 then loop(w_presentes, "presentes") end
+   if menu == 12 then loop(Main, "Main") end
+
+   MAINLUA = -1
+end
+
+
+
+function w_brancas()
+   menu = gg.choice({
+      "《🔪》《Faca》",
+      "《🦯》《Cassetete》",
+      "《🗡️》《Katana》",
+      "《🏏》《Taco de Beisebol》",
+      "《⛳》《Taco de Golf》",
+      "《🪚》《Pá》",
+      "《🎱》《Taco de Sinuca》",
+      "《🪚》《Serrote》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷ARMAS BRANCAS🇧🇷")
+
+   if menu == 1 then faca() end
+   if menu == 2 then cassetete() end
+   if menu == 3 then katana() end
+   if menu == 4 then tacobeisebol() end
+   if menu == 5 then tacogolf() end
+   if menu == 6 then pa() end
+   if menu == 7 then tacosinuca() end
+   if menu == 8 then serrote() end
+   if menu == 9 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+
+function w_pistolas()
+   menu = gg.choice({
+      "《🔫》《Colt 45》",
+      "《🔫》《Pistola Silenciada》",
+      "《🔫》《Desert Eagle》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷PISTOLAS🇧🇷")
+
+   if menu == 1 then colt45() end
+   if menu == 2 then silenciada() end
+   if menu == 3 then eagle() end
+   if menu == 4 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+function w_escopeta()
+   menu = gg.choice({
+      "《🔫》《Espingarda》",
+      "《🔫》《Espingarda Serrada》",
+      "《🔫》《Espingarda de Combate》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷ESPINGARDAS🇧🇷")
+
+   if menu == 1 then esping() end
+   if menu == 2 then espingcerrada() end
+   if menu == 3 then espingdecombate() end
+   if menu == 4 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+function w_sub()
+   menu = gg.choice({
+      "《🔫》《Uzi》",
+      "《🔫》《Tec-9》",
+      "《🔫》《MP5》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷SUBMETRALHADORAS🇧🇷")
+
+   if menu == 1 then uzi() end
+   if menu == 2 then tec9() end
+   if menu == 3 then mp5() end
+   if menu == 4 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+function w_rifle()
+   menu = gg.choice({
+      "《🔫》《Rifle》",
+      "《🔫》《Sniper Rifle》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷RIFLES🇧🇷")
+
+   if menu == 1 then rifle() end
+   if menu == 2 then sniper() end
+   if menu == 3 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+function w_fuzis()
+   menu = gg.choice({
+      "《🔫》《AK-47》",
+      "《🔫》《M4》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷FUZIS🇧🇷")
+
+   if menu == 1 then ak47() end
+   if menu == 2 then m4() end
+   if menu == 3 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+
+function w_pesadas()
+   menu = gg.choice({
+      "《💣》《Lança-Foguetes》",
+      "《💣》《Lança-Chamas》",
+      "《💣》《Minigun》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷ARMAS PESADAS🇧🇷")
+
+   if menu == 1 then lancafoguete() end
+   if menu == 2 then lancachamas() end
+   if menu == 3 then minigun() end
+   if menu == 4 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+function w_especiais()
+   menu = gg.choice({
+      "《🎯》《Visão Noturna》",
+      "《🎯》《Visão Térmica》",
+      "《🪂》《Paraquedas》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷ITENS ESPECIAIS🇧🇷")
+
+   if menu == 1 then nightvision() end
+   if menu == 2 then thermalvision() end
+   if menu == 3 then paraquedas() end
+   if menu == 4 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+
+function w_projeteis()
+   menu = gg.choice({
+      "《💣》《Granada》",
+      "《💨》《Gás Lacrimogêneo》",
+      "《🔥》《Molotov》",
+      "《🧨》《Carga Explosiva (Satchel)》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷EXPLOSIVOS / PROJÉTEIS🇧🇷")
+
+   if menu == 1 then granada() end
+   if menu == 2 then lacrimogeno() end
+   if menu == 3 then molotov() end
+   if menu == 4 then satchel() end
+   if menu == 5 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+function w_especiais()
+   menu = gg.choice({
+      "《🧴》《Spray》",
+      "《🧯》《Extintor》",
+      "《📷》《Câmera》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷ITENS ESPECIAIS🇧🇷")
+
+   if menu == 1 then spray() end
+   if menu == 2 then extintor() end
+   if menu == 3 then camera() end
+   if menu == 4 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+function w_itens()
+   menu = gg.choice({
+      "《🧯》《Spray de Tinta》",
+      "《🧯》《Extintor de Incêndio》",
+      "《📸》《Câmera》",
+      "《↩️》Voltar"
+   }, nil, "🇧🇷ITENS ESPECIAIS🇧🇷")
+
+   if menu == 1 then spray() end
+   if menu == 2 then extintor() end
+   if menu == 3 then camera() end
+   if menu == 4 then loop(weaponchanger, "back") end
+
+   MAINLUA = -1
+end
+
+
+function w_presentes()
+   menu = gg.choice({
+      "《🍆》《Dildo》",
+      "《🍆》《Dildo 2》",
+      "《🔋》《Vibrador》",
+      "《🌹》《Flores》",
+      "《🦯》《Bengala》",
+      "《↩️》Voltar"
+   }, nil, "🎁 MENU DE PRESENTES 🎁")
+
+   if menu == 1 then dildo1() end
+   if menu == 2 then dildo2() end
+   if menu == 3 then vibrador() end
+   if menu == 4 then flores() end
+   if menu == 5 then bengala() end
+   if menu == 6 then loop(weaponchanger, "wpc") end
+
+   MAINLUA = -1
+end
+
+
+
+
+
+
+ function weaponbase()
+
+   weapon_base = {
+     {99999.9921875, 0}
+   }
+  
+   wp = SearchGet("Ca","f", weapon_base)
+  
+   gg.addListItems(wp)
+   gg.loadResults(gg.getListItems())
+   guns = gg.getResults(100)
+   gg.toast("Carregado com sucesso")
+  
+end
+
+
+
+
+local weapon = {
+
+   -- Pistolas
+   colt45_w        = {{22, 0x70},  {346, 0x78},  {99999, 0x7C,  true}},
+   silenciada_w    = {{23, 0x70},  {347, 0x78},  {99999, 0x7C,  true}},
+   eagle_w         = {{24, 0x70},  {348, 0x78},  {99999, 0x7C,  true}},
+
+   -- Escopetas
+   espingarda_w         = {{25, 0x90},  {349, 0x98},  {99999, 0x9C,  true}},
+   espingardacerrada_w  = {{26, 0x90},  {350, 0x98},  {99999, 0x9C,  true}},
+   espingardadcombate_w = {{27, 0x90},  {351, 0x98},  {99999, 0x9C,  true}},
+
+   -- Submetralhadoras
+   uzi_w           = {{28, 0xB0},  {352, 0xB8},  {99999, 0xBC,  true}},
+   mp5_w           = {{29, 0xB0},  {353, 0xB8},  {99999, 0xBC,  true}},
+   tec9_w          = {{32, 0xB0},  {354, 0xB8},  {99999, 0xBC,  true}},
+
+   -- Rifles
+   rifle_w         = {{33, 0xF0},  {355, 0xF8},  {99999, 0xFC,  true}},
+   sniper_w        = {{34, 0xF0},  {356, 0xF8},  {99999, 0xFC,  true}},
+
+   -- Fuzil de assalto
+   ak47_w          = {{30, 0xD0},  {355, 0xD8},  {99999, 0xDC,  true}},
+   m4_w            = {{31, 0xD0},  {356, 0xD8},  {99999, 0xDC,  true}},
+
+   -- Armas Pesadas
+   rpg_w           = {{35, 0x110}, {357, 0x118}, {99999, 0x11C, true}},
+   heatseeker_w    = {{36, 0x110}, {358, 0x118}, {99999, 0x11C, true}},
+   lanca_chamas_w  = {{37, 0x110}, {359, 0x118}, {99999, 0x11C, true}},
+   minigun_w       = {{38, 0x110}, {360, 0x118}, {99999, 0x11C, true}},
+
+   -- Armas Brancas
+   faca_w          = {{4,  0x50},  {335, 0x58},  {99999, 0x5C,  true}},
+   cassetete_w     = {{3,  0x50},  {334, 0x58},  {99999, 0x5C,  true}},
+   katana_w        = {{8,  0x50},  {339, 0x58},  {99999, 0x5C,  true}},
+   tacobeisebol_w  = {{5,  0x50},  {336, 0x58},  {99999, 0x5C,  true}},
+   tacogolf_w      = {{2,  0x50},  {333, 0x58},  {99999, 0x5C,  true}},
+   pa_w            = {{6,  0x50},  {337, 0x58},  {99999, 0x5C,  true}},
+   tacosinuca_w    = {{7,  0x50},  {338, 0x58},  {99999, 0x5C,  true}},
+   serrote_w       = {{9,  0x50},  {340, 0x58},  {99999, 0x5C,  true}},
+
+   -- Visores Especiais
+   nightvision_w   = {{44, 0x190}, {368, 0x198}, {99999, 0x19C, true}},
+   thermalvision_w = {{45, 0x190}, {369, 0x198}, {99999, 0x19C, true}},
+   paraquedas_w    = {{46, 0x190}, {370, 0x198}, {99999, 0x19C, true}},
+
+   -- Explosivos / Projéteis
+   granada_w       = {{16, 0x130}, {361, 0x138}, {99999, 0x13C, true}},
+   acrimogeno_w    = {{17, 0x130}, {362, 0x138}, {99999, 0x13C, true}},
+   molotov_w       = {{18, 0x130}, {363, 0x138}, {99999, 0x13C, true}},
+   satchel_w       = {{39, 0x130}, {364, 0x138}, {99999, 0x13C, true}},
+
+   -- Itens Especiais
+   spray_w         = {{41, 0x150}, {365, 0x158}, {99999, 0x15C, true}},
+   extintor_w      = {{42, 0x150}, {366, 0x158}, {99999, 0x15C, true}},
+   camera_w        = {{43, 0x150}, {367, 0x158}, {99999, 0x15C, true}},
+
+   -- Presentes
+   dildo1_w        = {{10, 0x170}, {341, 0x178}, {99999, 0x17C, true}},
+   dildo2_w        = {{11, 0x170}, {342, 0x178}, {99999, 0x17C, true}},
+   vibrador_w      = {{12, 0x170}, {343, 0x178}, {99999, 0x17C, true}},
+   flores_w        = {{14, 0x170}, {344, 0x178}, {99999, 0x17C, true}},
+   bengala_w       = {{15, 0x170}, {345, 0x178}, {99999, 0x17C, true}}
+}
+
+ 
+
+-- Armas Brancas
+function faca() editGet(guns, weapon.faca_w, "d") end
+function cassetete() editGet(guns, weapon.cassetete_w, "d") end
+function katana() editGet(guns, weapon.katana_w, "d") end
+function tacobeisebol() editGet(guns, weapon.tacobeisebol_w, "d") end
+function tacogolf() editGet(guns, weapon.tacogolf_w, "d") end
+function pa() editGet(guns, weapon.pa_w, "d") end
+function tacosinuca() editGet(guns, weapon.tacosinuca_w, "d") end
+function serrote() editGet(guns, weapon.serrote_w, "d") end
+
+-- Pistolas
+function colt45() editGet(guns, weapon.colt45_w, "d") end
+function silenciada() editGet(guns, weapon.silenciada_w, "d") end
+function eagle() editGet(guns, weapon.eagle_w, "d") end
+
+-- Escopetas
+function esping() editGet(guns, weapon.espingarda_w, "d") end
+function espingcerrada() editGet(guns, weapon.espingardacerrada_w, "d") end
+function espingdecombate() editGet(guns, weapon.espingardadcombate_w, "d") end
+
+-- Submetralhadoras
+function uzi() editGet(guns, weapon.uzi_w, "d") end
+function tec9() editGet(guns, weapon.tec9_w, "d") end
+function mp5() editGet(guns, weapon.mp5_w, "d") end
+
+-- Rifles
+function rifle() editGet(guns, weapon.rifle_w, "d") end
+function sniper() editGet(guns, weapon.sniper_w, "d") end
+
+-- Fuzis
+function ak47() editGet(guns, weapon.ak47_w, "d") end
+function m4() editGet(guns, weapon.m4_w, "d") end
+
+-- Pesadas
+function lancafoguete() editGet(guns, weapon.lancafoguetes_w, "d") end
+function lancachamas() editGet(guns, weapon.lancachamas_w, "d") end
+function minigun() editGet(guns, weapon.minigun_w, "d") end
+
+-- Especiais
+function nightvision() editGet(guns, weapon.visaonoturna_w, "d") end
+function thermalvision() editGet(guns, weapon.visaotermal_w, "d") end
+function paraquedas() editGet(guns, weapon.paraquedas_w, "d") end
+
+
+function granada() editGet(guns, weapon.granada_w, "d") end
+function lacrimogeno() editGet(guns, weapon.lacrimogeno_w, "d") end
+function molotov() editGet(guns, weapon.molotov_w, "d") end
+function satchel() editGet(guns, weapon.satchel_w, "d") end
+
+
+function spray() editGet(guns, weapon.spray_w, "d") end
+function extintor() editGet(guns, weapon.extintor_w, "d") end
+function camera() editGet(guns, weapon.camera_w, "d") end
+
+function dildo1() editGet(guns, weapon.dildo1_w, "d") end
+function dildo2() editGet(guns, weapon.dildo2_w, "d") end
+function vibrador() editGet(guns, weapon.vibrador_w, "d") end
+function flores() editGet(guns, weapon.flores_w, "d") end
+function bengala() editGet(guns, weapon.bengala_w, "d") end
+
+
+
+
+
+
+
+function TpCar()
+    -- Ponteiro para chegar na posição do player
+    player_base = {
+        {1158239360, 0},
+        {1154044736, 0x4},
+        {1148842240, 0x8},
+    }
+
+    -- Buscar o ponteiro da posição do jogador
+    a = SearchGet("Ca", "d", player_base)
+    gg.addListItems(a)
+    gg.loadResults(gg.getListItems())
+    LoadTP = gg.getResults(100)
+
+    -- Verifica se encontramos o ponteiro
+    if #LoadTP == 0 then
+        gg.toast("Erro: Ponteiro do jogador não encontrado.")
+        return
+    end
+
+    -- Agora, buscamos a posição do jogador usando o ponteiro
+    local player_position_offset = {
+        {0x68, "f"}, -- X
+        {0x6C, "f"}, -- Z
+        {0x70, "f"}, -- Y
+    }
+
+    local jogador_posicao = SearchGet("Ca","f", player_position_offset)
+
+    -- Verifica se encontramos os valores de posição
+    if #jogador_posicao < 3 then
+        gg.toast("Erro: Posição do jogador não encontrada.")
+        return
+    end
+
+    local jogador_posicao_x = jogador_posicao[1].value  -- X do jogador
+    local jogador_posicao_z = jogador_posicao[2].value  -- Z do jogador
+    local jogador_posicao_y = jogador_posicao[3].value  -- Y do jogador
+
+    gg.toast("Posição do jogador encontrada: X=" .. jogador_posicao_x .. " Z=" .. jogador_posicao_z .. " Y=" .. jogador_posicao_y)
+
+    -- Buscar valores próximos para o veículo (baseado em X)
+    local intervalo_x = 2
+    local pos_veiculo_x = {jogador_posicao_x - intervalo_x, jogador_posicao_x + intervalo_x}
+    local busca_veiculo_x = SearchGet("Ca","f", pos_veiculo_x)
+
+    if busca_veiculo_x and #busca_veiculo_x > 0 then
+        -- Coordenadas do hotel
+        local hotel_position = {
+            {-817.32043457031, 0x68, "f"}, -- X
+            {-1941.08801269531, 0x6C, "f"}, -- Z
+            {54.33535385132, 0x70, "f"}, -- Y
+        }
+
+        -- Editar posição do veículo
+        local veiculo_position = {
+            {hotel_position[1][1], 0x68, "f"},
+            {hotel_position[2][1], 0x6C, "f"},
+            {hotel_position[3][1], 0x70, "f"},
+        }
+
+        editGet(busca_veiculo_x, veiculo_position, "f")
+
+        gg.toast("Veículo teletransportado para o hotel!")
+    else
+        gg.toast("Não foi possível encontrar a posição X do veículo.")
+    end
+end
+
+
+ 
+
+loopTeleport = false -- Teleporte desligado por padrão
+returnToMenu = false -- Controla retorno ao menu principal
+returnToMenu2 = false
+
+-- Variável global para armazenar o tempo de teleporte
+tempoTeleporte = {220}
+
+function timef()
+   -- Input para definir o tempo de teleporte para cada ponto
+   local input = gg.prompt({
+      'Defina os Milissegundos pra TP' }, tempoTeleporte, {'number'})
+
+   if input then
+      tempoTeleporte = input
+      gg.toast('Tempo atualizado com sucesso!')
+   else
+      gg.toast('Configuração de tempo cancelada.')
+   end
+end
+
+-- Definição dos pontos de teletransporte
+local pontos = {
+   Emprego = {{-366.06225585938, 0x68, 'f'}, {-2170.89794921875, 0x6C, 'f'}, {32.85216140747, 0x70, 'f'}},
+NovoPonto1 = {{-304.96893310547, 0x68, 'f'}, {-2264.50244140625, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto2 = {{-305.86499023438, 0x68, 'f'}, {-2264.0810546875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto3 = {{-306.81802368164, 0x68, 'f'}, {-2263.60327148438, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto4 = {{-307.80242919922, 0x68, 'f'}, {-2263.23657226562, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto5 = {{-308.86236572266, 0x68, 'f'}, {-2262.45458984375, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto6 = {{-309.84985351562, 0x68, 'f'}, {-2261.7900390625, 0x6C, 'f'}, {32.97025680542, 0x70, 'f'}},  
+NovoPonto7 = {{-311.61270141602, 0x68, 'f'}, {-2260.6025390625, 0x6C, 'f'}, {32.87229156494, 0x70, 'f'}},  
+NovoPonto8 = {{-312.02093505859, 0x68, 'f'}, {-2259.482421875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto9 = {{-312.20553588867, 0x68, 'f'}, {-2258.53100585938, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto10 = {{-312.52041625977, 0x68, 'f'}, {-2257.45361328125, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto11 = {{-312.77618408203, 0x68, 'f'}, {-2256.41137695312, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto12 = {{-313.04794311523, 0x68, 'f'}, {-2255.33935546875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto13 = {{-313.15911865234, 0x68, 'f'}, {-2254.12255859375, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto14 = {{-313.57751464844, 0x68, 'f'}, {-2252.876953125, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto15 = {{-313.80279541016, 0x68, 'f'}, {-2251.63330078125, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto16 = {{-314.09387207031, 0x68, 'f'}, {-2250.51806640625, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto17 = {{-314.57427978516, 0x68, 'f'}, {-2249.4873046875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto18 = {{-314.65686035156, 0x68, 'f'}, {-2248.35522460938, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto19 = {{-314.69677734375, 0x68, 'f'}, {-2246.9951171875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto20 = {{-314.84878540039, 0x68, 'f'}, {-2245.42749023438, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto21 = {{-315.02102661133, 0x68, 'f'}, {-2243.86376953125, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto22 = {{-315.33746337891, 0x68, 'f'}, {-2242.6044921875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto23 = {{-315.70901489258, 0x68, 'f'}, {-2240.47509765625, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto24 = {{-316.23434448242, 0x68, 'f'}, {-2239.47973632812, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto25 = {{-317.69149780273, 0x68, 'f'}, {-2239.51123046875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto26 = {{-318.04483032227, 0x68, 'f'}, {-2240.80908203125, 0x6C, 'f'}, {33.75150680542, 0x70, 'f'}},  
+NovoPonto27 = {{-317.99942016602, 0x68, 'f'}, {-2241.998046875, 0x6C, 'f'}, {34.32181930542, 0x70, 'f'}},  
+NovoPonto28 = {{-318.22732543945, 0x68, 'f'}, {-2243.20947265625, 0x6C, 'f'}, {34.69681930542, 0x70, 'f'}},  
+NovoPonto29 = {{-318.26388549805, 0x68, 'f'}, {-2243.97265625, 0x6C, 'f'}, {35.07181930542, 0x70, 'f'}},  
+NovoPonto30 = {{-318.29650878906, 0x68, 'f'}, {-2244.66552734375, 0x6C, 'f'}, {35.44681930542, 0x70, 'f'}},  
+NovoPonto31 = {{-318.42889404297, 0x68, 'f'}, {-2245.515625, 0x6C, 'f'}, {35.82181930542, 0x70, 'f'}},  
+NovoPonto32 = {{-318.46618652344, 0x68, 'f'}, {-2246.2353515625, 0x6C, 'f'}, {36.19681930542, 0x70, 'f'}},  
+NovoPonto33 = {{-318.634765625, 0x68, 'f'}, {-2247.01391601562, 0x6C, 'f'}, {36.57181930542, 0x70, 'f'}},  
+NovoPonto34 = {{-318.77709960938, 0x68, 'f'}, {-2247.86059570312, 0x6C, 'f'}, {36.94681930542, 0x70, 'f'}},  
+NovoPonto35 = {{-318.8801574707, 0x68, 'f'}, {-2248.61889648438, 0x6C, 'f'}, {37.32181930542, 0x70, 'f'}},  
+NovoPonto36 = {{-318.95922851562, 0x68, 'f'}, {-2249.28442382812, 0x6C, 'f'}, {37.50931930542, 0x70, 'f'}},  
+NovoPonto37 = {{-319.08551025391, 0x68, 'f'}, {-2249.94506835938, 0x6C, 'f'}, {37.89213180542, 0x70, 'f'}},  
+NovoPonto38 = {{-319.37872314453, 0x68, 'f'}, {-2250.66284179688, 0x6C, 'f'}, {38.26713180542, 0x70, 'f'}},  
+NovoPonto39 = {{-319.4333190918, 0x68, 'f'}, {-2251.11840820312, 0x6C, 'f'}, {38.45463180542, 0x70, 'f'}},  
+NovoPonto40 = {{-319.54949951172, 0x68, 'f'}, {-2251.91650390625, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},
+NovoPonto41 = {{-319.68991088867, 0x68, 'f'}, {-2252.6494140625, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto42 = {{-319.85491943359, 0x68, 'f'}, {-2253.4365234375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto43 = {{-319.98498535156, 0x68, 'f'}, {-2254.14453125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto44 = {{-320.16394042969, 0x68, 'f'}, {-2255.080078125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto45 = {{-320.38757324219, 0x68, 'f'}, {-2255.978515625, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto46 = {{-320.67239379883, 0x68, 'f'}, {-2256.81860351562, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto47 = {{-319.4208984375, 0x68, 'f'}, {-2256.67651367188, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto48 = {{-318.56085205078, 0x68, 'f'}, {-2256.11694335938, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto49 = {{-317.82391357422, 0x68, 'f'}, {-2255.71850585938, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto50 = {{-317.09909057617, 0x68, 'f'}, {-2255.28271484375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto51 = {{-316.03485107422, 0x68, 'f'}, {-2254.55419921875, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto52 = {{-315.11117553711, 0x68, 'f'}, {-2254.00952148438, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto53 = {{-313.99822998047, 0x68, 'f'}, {-2253.36059570312, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto54 = {{-312.88049316406, 0x68, 'f'}, {-2252.42358398438, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto55 = {{-312.07150268555, 0x68, 'f'}, {-2252.0380859375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto56 = {{-311.38345336914, 0x68, 'f'}, {-2251.54956054688, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto57 = {{-310.55551147461, 0x68, 'f'}, {-2250.76293945312, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto58 = {{-309.99551391602, 0x68, 'f'}, {-2250.18286132812, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto59 = {{-309.55657958984, 0x68, 'f'}, {-2249.68115234375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto60 = {{-308.48773193359, 0x68, 'f'}, {-2248.80932617188, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto61 = {{-307.93087768555, 0x68, 'f'}, {-2248.00048828125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto62 = {{-307.13806152344, 0x68, 'f'}, {-2247.57763671875, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto63 = {{-306.41351318359, 0x68, 'f'}, {-2246.88891601562, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto64 = {{-305.74603271484, 0x68, 'f'}, {-2246.22412109375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto65 = {{-305.02719116211, 0x68, 'f'}, {-2245.57250976562, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto66 = {{-304.44085693359, 0x68, 'f'}, {-2244.89453125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto67 = {{-303.82061767578, 0x68, 'f'}, {-2244.29907226562, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto68 = {{-302.84674072266, 0x68, 'f'}, {-2243.71240234375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto69 = {{-302.10824584961, 0x68, 'f'}, {-2243.03662109375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto70 = {{-301.49298095703, 0x68, 'f'}, {-2242.47338867188, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto71 = {{-300.876953125, 0x68, 'f'}, {-2241.89013671875, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto72 = {{-300.06176757812, 0x68, 'f'}, {-2241.19165039062, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto73 = {{-299.44711303711, 0x68, 'f'}, {-2240.67504882812, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto74 = {{-298.75863647461, 0x68, 'f'}, {-2240.0234375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto75 = {{-298.06976318359, 0x68, 'f'}, {-2239.3115234375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto76 = {{-297.20455932617, 0x68, 'f'}, {-2238.30078125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto77 = {{-296.28472900391, 0x68, 'f'}, {-2237.3388671875, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto78 = {{-295.33901977539, 0x68, 'f'}, {-2236.4052734375, 0x6C, 'f'}, {38.83744430542, 0x70, 'f'}},  
+NovoPonto79 = {{-294.35061645508, 0x68, 'f'}, {-2235.48364257812, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto80 = {{-293.55541992188, 0x68, 'f'}, {-2234.76538085938, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},
+NovoPonto81 = {{-293.08020019531, 0x68, 'f'}, {-2234.23583984375, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto82 = {{-292.26699829102, 0x68, 'f'}, {-2233.53295898438, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto83 = {{-291.69857788086, 0x68, 'f'}, {-2232.97290039062, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto84 = {{-291.07144165039, 0x68, 'f'}, {-2232.32080078125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto85 = {{-290.48104858398, 0x68, 'f'}, {-2231.572265625, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto86 = {{-289.88070678711, 0x68, 'f'}, {-2230.97485351562, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto87 = {{-289.49566650391, 0x68, 'f'}, {-2230.55419921875, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto88 = {{-288.94055175781, 0x68, 'f'}, {-2230.09423828125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto89 = {{-288.06945800781, 0x68, 'f'}, {-2229.32788085938, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto90 = {{-287.76675415039, 0x68, 'f'}, {-2228.47143554688, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto91 = {{-287.41162109375, 0x68, 'f'}, {-2227.46142578125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto92 = {{-287.00659179688, 0x68, 'f'}, {-2226.5322265625, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto93 = {{-286.71170043945, 0x68, 'f'}, {-2225.73828125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto94 = {{-286.41940307617, 0x68, 'f'}, {-2224.77075195312, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto95 = {{-286.26031494141, 0x68, 'f'}, {-2223.76806640625, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto96 = {{-286.28262329102, 0x68, 'f'}, {-2222.62158203125, 0x6C, 'f'}, {38.82963180542, 0x70, 'f'}},  
+NovoPonto97 = {{-286.3283996582, 0x68, 'f'}, {-2221.14331054688, 0x6C, 'f'}, {37.89213180542, 0x70, 'f'}},  
+NovoPonto98 = {{-287.12036132812, 0x68, 'f'}, {-2221.02294921875, 0x6C, 'f'}, {37.69681930542, 0x70, 'f'}},  
+NovoPonto99 = {{-288.06433105469, 0x68, 'f'}, {-2221.04931640625, 0x6C, 'f'}, {37.13431930542, 0x70, 'f'}},  
+NovoPonto100 = {{-288.70355224609, 0x68, 'f'}, {-2221.14428710938, 0x6C, 'f'}, {36.75931930542, 0x70, 'f'}},  
+NovoPonto101 = {{-289.29772949219, 0x68, 'f'}, {-2221.35815429688, 0x6C, 'f'}, {36.57181930542, 0x70, 'f'}},  
+NovoPonto102 = {{-290.00231933594, 0x68, 'f'}, {-2221.29370117188, 0x6C, 'f'}, {36.19681930542, 0x70, 'f'}},  
+NovoPonto103 = {{-290.84158325195, 0x68, 'f'}, {-2221.5244140625, 0x6C, 'f'}, {35.82181930542, 0x70, 'f'}},  
+NovoPonto104 = {{-291.5969543457, 0x68, 'f'}, {-2221.67602539062, 0x6C, 'f'}, {35.44681930542, 0x70, 'f'}},  
+NovoPonto105 = {{-292.42288208008, 0x68, 'f'}, {-2221.80615234375, 0x6C, 'f'}, {35.07181930542, 0x70, 'f'}},  
+NovoPonto106 = {{-293.4235534668, 0x68, 'f'}, {-2222.11328125, 0x6C, 'f'}, {34.50931930542, 0x70, 'f'}},  
+NovoPonto107 = {{-294.33148193359, 0x68, 'f'}, {-2222.41967773438, 0x6C, 'f'}, {34.13431930542, 0x70, 'f'}},  
+NovoPonto108 = {{-295.43719482422, 0x68, 'f'}, {-2222.6689453125, 0x6C, 'f'}, {33.56400680542, 0x70, 'f'}},  
+NovoPonto109 = {{-296.49905395508, 0x68, 'f'}, {-2222.80102539062, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto110 = {{-297.60775756836, 0x68, 'f'}, {-2223.06176757812, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto111 = {{-298.90493774414, 0x68, 'f'}, {-2223.47387695312, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto112 = {{-299.95358276367, 0x68, 'f'}, {-2223.83447265625, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto113 = {{-300.79748535156, 0x68, 'f'}, {-2224.14013671875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto114 = {{-301.80029296875, 0x68, 'f'}, {-2224.51586914062, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto115 = {{-302.87442016602, 0x68, 'f'}, {-2224.94995117188, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto116 = {{-303.70401000977, 0x68, 'f'}, {-2225.42211914062, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto117 = {{-304.45916748047, 0x68, 'f'}, {-2225.80151367188, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto118 = {{-305.76840209961, 0x68, 'f'}, {-2226.18310546875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto119 = {{-306.92379760742, 0x68, 'f'}, {-2226.74633789062, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto120 = {{-307.97015380859, 0x68, 'f'}, {-2227.2119140625, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},
+NovoPonto121 = {{-308.49160766602, 0x68, 'f'}, {-2228.13745117188, 0x6C, 'f'}, {33.32181930542, 0x70, 'f'}},  
+NovoPonto122 = {{-308.73345947266, 0x68, 'f'}, {-2229.28149414062, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto123 = {{-309.15686035156, 0x68, 'f'}, {-2230.49829101562, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto124 = {{-309.49111938477, 0x68, 'f'}, {-2231.68237304688, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto125 = {{-309.63317871094, 0x68, 'f'}, {-2232.98291015625, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto126 = {{-309.78997802734, 0x68, 'f'}, {-2233.79760742188, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto127 = {{-310.09396362305, 0x68, 'f'}, {-2234.74877929688, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto128 = {{-310.01766967773, 0x68, 'f'}, {-2235.69604492188, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto129 = {{-310.08502197266, 0x68, 'f'}, {-2236.99609375, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto130 = {{-309.77496337891, 0x68, 'f'}, {-2238.58520507812, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto131 = {{-309.59985351562, 0x68, 'f'}, {-2240.0732421875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto132 = {{-309.2565612793, 0x68, 'f'}, {-2241.60229492188, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto133 = {{-309.01672363281, 0x68, 'f'}, {-2242.78540039062, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto134 = {{-308.89627075195, 0x68, 'f'}, {-2243.90893554688, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto135 = {{-308.65063476562, 0x68, 'f'}, {-2245.33447265625, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto136 = {{-308.29330444336, 0x68, 'f'}, {-2246.8369140625, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto137 = {{-308.05715942383, 0x68, 'f'}, {-2248.08618164062, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto138 = {{-307.75839233398, 0x68, 'f'}, {-2249.20825195312, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto139 = {{-307.34979248047, 0x68, 'f'}, {-2250.3779296875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto140 = {{-307.11447143555, 0x68, 'f'}, {-2251.7255859375, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto141 = {{-306.99322509766, 0x68, 'f'}, {-2253.25756835938, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto142 = {{-306.82495117188, 0x68, 'f'}, {-2254.08422851562, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto143 = {{-306.41329956055, 0x68, 'f'}, {-2255.58129882812, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto144 = {{-306.18225097656, 0x68, 'f'}, {-2256.95092773438, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto145 = {{-306.11962890625, 0x68, 'f'}, {-2258.07836914062, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto146 = {{-305.82574462891, 0x68, 'f'}, {-2258.95678710938, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto147 = {{-305.71069335938, 0x68, 'f'}, {-2260.14038085938, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto148 = {{-305.51354980469, 0x68, 'f'}, {-2261.3291015625, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto149 = {{-305.50277709961, 0x68, 'f'}, {-2262.341796875, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto150 = {{-305.43566894531, 0x68, 'f'}, {-2262.95874023438, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}},  
+NovoPonto151 = {{-305.25006103516, 0x68, 'f'}, {-2264.48876953125, 0x6C, 'f'}, {33.30619430542, 0x70, 'f'}} 
+
+
+
+}
+
+
+
+function chefobra()
+   editGet(LoadTP, pontos.Emprego, 'f')
+   h = gg.alert('Quer farmar de baixo da terra ? \nPegue o trabalho, não aceite ainda e clique no GG para continuar.', 'Sim', 'Não')
+   if h == 1 then
+      while true do
+         if gg.isVisible() then
+            gg.setVisible(false)
+            break
+         end
+      end
+      porta_igreja()
+   else
+      loop(TpFarm)
+   end
+end
+
+function farm()
+
+   loopTeleport = true -- Ativa o loop de teletransporte
+
+   while loopTeleport do
+      if not loopTeleport then break end -- Sai do loop se parar
+
+      editGet(LoadTP, pontos.NovoPonto1, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto2, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto3, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto4, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto5, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto6, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto7, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto8, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto9, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto10, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto11, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto12, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto13, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto14, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto15, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto16, 'f')
+      gg.sleep(tempoTeleporte[1])
+      editGet(LoadTP, pontos.NovoPonto17, 'f')
+      gg.sleep(tempoTeleporte[1])
+      
+      editGet(LoadTP, pontos.NovoPonto18, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto19, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto20, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto21, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto22, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto23, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto24, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto25, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto26, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto27, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto28, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto29, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto30, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto31, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto32, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto33, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto34, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto35, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto36, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto37, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto38, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto39, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto40, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto41, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto42, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto43, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto44, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto45, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto46, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto47, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto48, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto49, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto50, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto51, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto52, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto53, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto54, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto55, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto56, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto57, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto58, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto59, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto60, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto61, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto62, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto63, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto64, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto65, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto66, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto67, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto68, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto69, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto70, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto71, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto72, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto73, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto74, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto75, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto76, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto77, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto78, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto79, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto80, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto81, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto82, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto83, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto84, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto85, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto86, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto87, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto88, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto89, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto90, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto91, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto92, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto93, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto94, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto95, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto96, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto97, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto98, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto99, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto100, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto101, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto102, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto103, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto104, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto105, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto106, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto107, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto108, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto109, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto110, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto111, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto112, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto113, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto114, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto115, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto116, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto117, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto118, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto119, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto120, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto121, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto122, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto123, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto124, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto125, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto126, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto127, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto128, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto129, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto130, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto131, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto132, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto133, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto134, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto135, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto136, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto137, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto138, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto139, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto140, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto141, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto142, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto143, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto144, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto145, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto146, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto147, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto148, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto149, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto150, 'f')
+gg.sleep(tempoTeleporte[1])
+
+editGet(LoadTP, pontos.NovoPonto151, 'f')
+gg.sleep(tempoTeleporte[1])                  
+     
+      gg.toast('𖤓⃟  𝙁𝙐𝙍𝙄𝘼 𝙈𝙊𝘿𝙕  ⃟𖤓')
+
+     
+      -- Verifica se o usuário abriu o menu GG durante o loop
+      if gg.isVisible() then
+         gg.setVisible(false)
+         local escolha = gg.choice({
+            '🔙 Voltar ao Menu Principal',
+            '🔙 Voltar ao Menu Anterior',
+            '❌ Parar Auto Farm'
+         }, nil, 'O que deseja fazer?')
+
+         if escolha == 1 then
+            loopTeleport = false
+            returnToMenu = true
+            break
+         elseif escolha == 2 then
+            loopTeleport = false
+            returnToMenu2 = true
+            break
+         elseif escolha == 3 then
+            loopTeleport = false
+            gg.toast('Auto Farm interrompido')
+            return
+         end
+      end
+   end
+
+   if returnToMenu then
+      returnToMenu = false
+      loop(Main, 'Main')
+   end
+   if returnToMenu2 then
+      returnToMenu2 = false
+      loop(TpFarm, 'farm')
+   end
+end
+
+function TpFarm1()
+    gg.alert('Manutenção')
+    end
+
+function TpFarm()
+   if not LoadTP or #LoadTP == 0 then
+      dados_local() -- Carregar dados
+   end
+
+   if not LoadTP or #LoadTP == 0 then
+      gg.alert("Erro: LoadTP está vazio após tentar carregar.")
+      return
+   end
+   menu = gg.choice({
+      '🛂 TP AO TRABALHO',
+      '⚙️ Config. Tempo Teleporte',
+      '⭐ Auto Loop Farm',
+      '↩️ Voltar'
+   }, nil, '🇧🇷 TELEPORTE FARM 🇧🇷')
+
+   if menu == 1 then chefobra() end
+   if menu == 2 then timef() end
+   if menu == 3 then farm() end
+   if menu == 4 then loop(Main, 'Main') end
+end
+
+
+function porta_igreja()
+
+   local Igreja_porta_position = {
+      {-1385.66833496094, 0x68, "f"}, -- x
+      {-2781.630859375, 0x6C, "f"}, -- z
+      {33.22509384155, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local igreja_data = gg.getResults(100)
+   editGet(igreja_data, Igreja_porta_position, "f")
+   gg.alert("Teleportado à Igreja, aceite o emprego e click no GG pra Continuar.")
+
+   while true do
+      if gg.isVisible() then
+         gg.setVisible(false)
+         break
+      end
+   end
+   editGet(LoadTP, pontos.NovoPonto110, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto111, 'f')
+gg.sleep(tempoTeleporte[1])
+editGet(LoadTP, pontos.NovoPonto112, 'f')
+gg.sleep(tempoTeleporte[1])
+   loop(TpFarm)
+   gg.toast("Começe a farmar agora, boa sorte!")
+end
+-------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------
+ 
+local vida_local = nil  -- Variável para armazenar o endereço da vida
+
+function vida()
+    -- Criar um prompt para definir o valor da vida
+    local input = gg.prompt({"Defina o valor da vida:"}, {999}, {"number"})
+   
+    if input == nil then
+        gg.toast("Operação cancelada")
+        return
+    end
+    
+    local valor_vida = tonumber(input[1])
+    
+    if valor_vida == nil or valor_vida <= 0 then
+        gg.toast("Valor inválido")
+        return
+    end
+    
+    -- Ajustar a quantidade elegível de vida estipulada
+    local vida_maxima = 99999  -- Definir um limite máximo
+    if valor_vida > vida_maxima then
+        valor_vida = vida_maxima
+        gg.toast("Valor ajustado para o máximo permitido: " .. vida_maxima)
+    end
+    
+    -- Definir valor base de vida a ser pesquisado
+    local vida_base = 99999.9921875 -- Valor base esperado no jogo
+    
+    if vida_local == nil then
+        -- Aumentar HP com base na entrada do usuário
+        local vida_inf = {
+            {vida_base, 0}, 
+        }
+        
+        vida_local = SearchGet("Ca", "f", vida_inf)  -- Armazena o endereço encontrado
+    end
+    
+    if vida_local then
+        local vida_edit = {
+            {valor_vida, -0x54}, -- Aplicando o novo valor de vida
+        }
+        
+        editGet(vida_local, vida_edit, "f")
+        gg.toast("Vida ajustada com sucesso! Novo valor: " .. valor_vida)
+    else
+        gg.toast("Erro ao encontrar o endereço da vida.")
+    end
+end
+
+
+
+
+ 
+ 
+ 
+ 
+ function hospital()
+
+   -- Posição do HP
+   local hp_position = {
+       {878.47790527344, 0x68, "f"}, -- x
+       {-1914.0517578125, 0x6C, "f"}, --z
+       {2.56862258911, 0x70, "f"}, --y
+   }
+
+   -- Teleportar
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local hp_data = gg.getResults(100)
+   editGet(hp_data, hp_position, "f")
+
+   gg.toast("Teleportado ao HP")
+end
+
+function metro()
+
+   -- Posição da estação de trem
+   local metro_position = {
+      {-996.79998779297, 0x68, "f"},
+      {-2681.90014648438, 0x6C, "f"},
+      {32.81225585938, 0x70, "f"},
+   }
+   -- Teleportar
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local metro_data = gg.getResults(100)
+   editGet(metro_data, metro_position, "f")
+
+   gg.toast("Teleportado à estação de metro")
+end
+
+function mina()
+
+   -- Posição da mina
+   local mine_position = {
+      {-91.86106109619, 0x68, "f"},
+      {-1575.32507324219, 0x6C, "f"},
+      {63.44041442871, 0x70, "f"},
+   }
+   -- Teleportar
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local mine_data = gg.getResults(100)
+   editGet(mine_data, mine_position, "f")
+
+   gg.toast("Teleportado à mina")
+end
+  
+function fazenda()
+
+   -- Posição da fazenda
+   local fazenda_position = {
+      {-59.9612159729, 0x68, "f"},
+      {83.26585388184, 0x6C, "f"},
+      {3.1171875, 0x70, "f"},
+   }
+   -- Teleportar
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local fazenda_data = gg.getResults(100)
+   editGet(fazenda_data, fazenda_position, "f")
+
+   gg.toast("Teleportado à fazenda")
+end
+
+
+function hotel()
+   local hotel_position = {
+       {-817.32043457031, 0x68, "f"}, -- x
+       {-1941.08801269531, 0x6C, "f"}, -- z
+       {54.33535385132, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local hotel_data = gg.getResults(100)
+   editGet(hotel_data, hotel_position, "f")
+   gg.toast("Teleportado ao Hotel")
+end
+
+function mercado_de_carros()
+   local mercado_position = {
+       {-1499.76037597656, 0x68, "f"}, -- x
+       {-1320.21057128906, 0x6C, "f"}, -- z
+       {54.33312606812, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local mercado_data = gg.getResults(100)
+   editGet(mercado_data, mercado_position, "f")
+   gg.toast("Teleportado ao Mercado de Carros")
+end
+
+function casa_de_leiloes()
+   local leiloes_position = {
+       {708.04791259766, 0x68, "f"}, -- x
+       {-1463.52783203125, 0x6C, "f"}, -- z
+       {2.4161157608, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local leiloes_data = gg.getResults(100)
+   editGet(leiloes_data, leiloes_position, "f")
+   gg.toast("Teleportado à Casa de Leilões")
+end
+
+function centro_de_montagem_de_pneus()
+   local pneus_position = {
+       {962.59313964844, 0x68, "f"}, -- x
+       {-1842.13293457031, 0x6C, "f"}, -- z
+       {2.01403832436, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local pneus_data = gg.getResults(100)
+   editGet(pneus_data, pneus_position, "f")
+   gg.toast("Teleportado ao Centro de Montagem de Pneus")
+end
+
+function centro_de_estilizacao()
+   local estilizacao_position = {
+       {1042.265625, 0x68, "f"}, -- x
+       {-1476.68505859375, 0x6C, "f"}, -- z
+       {1.59781241417, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local estilizacao_data = gg.getResults(100)
+   editGet(estilizacao_data, estilizacao_position, "f")
+   gg.toast("Teleportado ao Centro de Estilização")
+end
+
+function centro_de_servicos()
+   local servicos_position = {
+       {734.02038574219, 0x68, "f"}, -- x
+       {-1048.78308105469, 0x6C, "f"}, -- z
+       {2.43835258484, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local servicos_data = gg.getResults(100)
+   editGet(servicos_data, servicos_position, "f")
+   gg.toast("Teleportado ao Centro de Serviços")
+end
+
+function loja_de_motos_bicicletas()
+   local motos_position = {
+       {1070.31359863281, 0x68, "f"}, -- x
+       {-1906.79016113281, 0x6C, "f"}, -- z
+       {1.50448250771, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local motos_data = gg.getResults(100)
+   editGet(motos_data, motos_position, "f")
+   gg.toast("Teleportado à Loja de Motos e Bicicletas")
+end
+
+function concessionaria_premium()
+   local premium_position = {
+       {551.50073242188, 0x68, "f"}, -- x
+       {-1971.9365234375, 0x6C, "f"}, -- z
+       {1.95359897614, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local premium_data = gg.getResults(100)
+   editGet(premium_data, premium_position, "f")
+   gg.toast("Teleportado à Concessionária Premium")
+end
+
+function concessionaria_classe_media()
+   local classe_media_position = {
+       {733.37786865234, 0x68, "f"}, -- x
+       {-1052.07385253906, 0x6C, "f"}, -- z
+       {2.43835258484, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local classe_media_data = gg.getResults(100)
+   editGet(classe_media_data, classe_media_position, "f")
+   gg.toast("Teleportado à Concessionária Classe Média")
+end
+
+function concessionaria_economica()
+   local economica_position = {
+       {-1325.31005859375, 0x68, "f"}, -- x
+       {-2728.75, 0x6C, "f"}, -- z
+       {32.67558288574, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local economica_data = gg.getResults(100)
+   editGet(economica_data, economica_position, "f")
+   gg.toast("Teleportado à Concessionária Econômica")
+end
+
+function igreja()
+   local igreja_position = {
+       {-1382.01013183594, 0x68, "f"}, -- x
+       {-2776.57788085938, 0x6C, "f"}, -- z
+       {32.67558288574, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local igreja_data = gg.getResults(100)
+   editGet(igreja_data, igreja_position, "f")
+   gg.toast("Teleportado à Igreja")
+end
+
+function mercado_de_acessorios()
+   local acessorios_position = {
+       {-1123.69262695312, 0x68, "f"}, -- x
+       {-1727.9169921875, 0x6C, "f"}, -- z
+       {54.33406066895, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local acessorios_data = gg.getResults(100)
+   editGet(acessorios_data, acessorios_position, "f")
+   gg.toast("Teleportado ao Mercado de Acessórios")
+end
+
+function escola_de_conducao()
+   local conducao_position = {
+       {-1283.64392089844, 0x68, "f"}, -- x
+       {-2564.0361328125, 0x6C, "f"}, -- z
+       {33.54915618896, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local conducao_data = gg.getResults(100)
+   editGet(conducao_data, conducao_position, "f")
+   gg.toast("Teleportado à Escola de Condução")
+end
+
+function prefeitura()
+   local prefeitura_position = {
+       {623.89147949219, 0x68, "f"}, -- x
+       {-1836.88208007812, 0x6C, "f"}, -- z
+       {1.90315747261, 0x70, "f"}, -- y
+   }
+   gg.addListItems(LoadTP)
+   gg.loadResults(gg.getListItems())
+   local prefeitura_data = gg.getResults(100)
+   editGet(prefeitura_data, prefeitura_position, "f")
+   gg.toast("Teleportado à Prefeitura")
+end
+
+
+
+
+function setFloat(address, value, message)
+   gg.setValues({{address = address, flags = gg.TYPE_FLOAT, value = value}})
+   gg.toast(message)
+end
+
+gg.setRanges(gg.REGION_JAVA_HEAP | gg.REGION_C_HEAP | gg.REGION_C_ALLOC | gg.REGION_C_DATA | gg.REGION_C_BSS | gg.REGION_PPSSPP | gg.REGION_ANONYMOUS | gg.REGION_OTHER | gg.REGION_CODE_APP | gg.REGION_CODE_SYS)
+
+function menupremium()
+   local mainMenu = gg.choice({
+       "𝐌𝐄𝐍𝐔 𝐉𝐎𝐆𝐀𝐃𝐎𝐑",
+       "𝐌𝐄𝐍𝐔 𝐂𝐀𝐑𝐑𝐎",
+       "𝐌𝐄𝐍𝐔 𝐀𝐑𝐌𝐀𝐒",
+       "𝐌𝐄𝐍𝐔 𝐓𝐄𝐋𝐀",
+       "𝐃𝐎𝐍𝐎 𝐃𝐎 𝐌𝐎𝐃",
+       "《↩️》Voltar"
+   }, nil, versao)
+
+   if mainMenu == 1 then loop(menuPlayer,"play") end
+   if mainMenu == 2 then loop(menuVeiculos,"vei") end
+   if mainMenu == 3 then loop(menuArmas,"arm") end
+   if mainMenu == 4 then loop(menuGame,"gam") end
+   if mainMenu == 5 then loop(criadores,"cria") end
+   if mainMenu == 6 then loop(Main,"ma") end
+end
+
+
+-- MENU PLAYER
+function menuPlayer()
+   local playerMenu = gg.choice({
+       "👣 𝐒𝐏𝐄𝐄𝐃 𝐏𝐋𝐀𝐘𝐄𝐑👣",
+       "👣 𝐒𝐏𝐄𝐄𝐃 𝐏𝐋𝐀𝐘𝐄𝐑  𝟐👣",
+       "𝐏𝐔𝐋𝐎 𝐃𝐀 𝐑𝐎𝐂̧𝐀",
+       -- "🧑‍🦯 Drone Visão(não ative!) 🧟",
+       "𝐌𝐎𝐃 𝐕𝐈𝐃𝐀",
+       "𝐌𝐎𝐃 𝐂𝐎𝐋𝐄𝐓𝐄",
+       "《↩️》Voltar"
+   }, nil, "👤 MENU PLAYER 👤")
+
+   if playerMenu == 1 then loop(speedHackOptions, "spdwalk") end
+   if playerMenu == 2 then loop(speedHackOptionsagachado, "spdcrouch") end
+   if playerMenu == 3 then loop(menuSuperPulo2, "jump") end
+   -- if playerMenu == 4 then loop(droneVisaoOptions, "drone") end
+   if playerMenu == 4 then loop(menuvida, "vida") end
+   if playerMenu == 5 then loop(menucolete, "colete") end
+   if playerMenu == 6 then loop(menupremium, "prin") end
+end
+
+
+-- MENU COLETE
+function menucolete()
+   local coleteMenu = gg.choice({
+       "🦺 99999 de Colete 🦺",
+       "🦺 200 de Colete 🦺",
+       "🦺 100 de Colete 🦺",
+       "🦺 50 de Colete 🦺",
+       "🦺 25 de Colete 🦺",
+       "🦺 0 de Colete 🦺",
+       "《↩️》Voltar"
+   }, nil, "🦺 MENU COLETE 🦺")
+
+   if coleteMenu == 1 then
+       alterarColete(99999) -- Alterar colete para 99999
+   elseif coleteMenu == 2 then
+       alterarColete(200)
+   elseif coleteMenu == 3 then
+       alterarColete(100)
+   elseif coleteMenu == 4 then
+       alterarColete(50)
+   elseif coleteMenu == 5 then
+       alterarColete(25)
+   elseif coleteMenu == 6 then
+       alterarColete(0)
+   elseif coleteMenu == 7 then
+       loop(menuPlayer,"play") -- Voltar ao Menu Player
+   end
+end
+
+-- Cache para endereço do colete
+local coleteCache = {
+   endereco = nil,
+   valorOriginal = 125.18000030518,
+   ultimoValor = nil
+}
+
+-- Função principal otimizada
+function alterarColete(novoValor)
+   -- Validação do input
+   if type(novoValor) ~= "number" or novoValor < 0 then
+       gg.toast("⚠️ Valor inválido! Use um número positivo")
+       return false
+   end
+
+   -- Se já temos o endereço em cache
+   if coleteCache.endereco then
+       -- Verificar se o valor no endereço ainda é válido
+       local valorAtual = gg.getValues({
+           {address = coleteCache.endereco, flags = gg.TYPE_FLOAT}
+       })[1].value
+       
+       if math.abs(valorAtual - coleteCache.valorOriginal) < 0.001 then
+           -- Atualizar apenas o valor seguinte
+           gg.setValues({
+               {
+                   address = coleteCache.endereco + 4,
+                   flags = gg.TYPE_FLOAT,
+                   value = novoValor
+               }
+           })
+           coleteCache.ultimoValor = novoValor
+           gg.toast(string.format("🛡️ Colete: %.1f", novoValor))
+           gg.clearResults()
+           return true
+       else
+           -- Cache inválido, limpar e pesquisar novamente
+           coleteCache.endereco = nil
+       end
+   end
+
+   -- Pesquisa necessária
+   gg.clearResults()
+   gg.searchNumber(coleteCache.valorOriginal, gg.TYPE_FLOAT)
+
+   local resultados = gg.getResults(1)
+   if #resultados == 0 then
+       gg.toast("❌ Valor do colete não encontrado!")
+       return false
+   end
+
+   -- Armazenar endereço em cache (+4 bytes para o valor seguinte)
+   coleteCache.endereco = resultados[1].address
+   coleteCache.ultimoValor = novoValor
+
+   -- Aplicar edição
+   gg.setValues({
+       {
+           address = coleteCache.endereco + 4,
+           flags = gg.TYPE_FLOAT,
+           value = novoValor
+       }
+   })
+
+   gg.toast(string.format("🛡️ Colete definido para %.1f", novoValor))
+   gg.clearResults()
+   return true
+end
+
+-- Função para resetar o cache
+function resetarCacheColete()
+   coleteCache.endereco = nil
+   gg.toast("🔄 Cache do colete resetado")
+end
+
+
+-- MENU VIDA
+function menuvida()
+   local vidaMenu = gg.choice({
+       "❤️ 99999 de Vida ❤️",
+       "❤️ 200 de Vida ❤️",
+       "❤️ 100 de Vida ❤️",
+       "❤️ 50 de Vida ❤️",
+       "❤️ 25 de Vida ❤️",
+       "💀 0 de Vida 💀",
+       "《↩️》Voltar"
+   }, nil, "❤️ MENU VIDA ❤️")
+
+   if vidaMenu == 1 then
+       alterarVida(99999) -- Alterar vida para 99999
+   elseif vidaMenu == 2 then
+       alterarVida(200)
+   elseif vidaMenu == 3 then
+       alterarVida(100)
+   elseif vidaMenu == 4 then
+       alterarVida(50)
+   elseif vidaMenu == 5 then
+       alterarVida(25)
+   elseif vidaMenu == 6 then
+       alterarVida(0)
+   elseif vidaMenu == 7 then
+       loop(menuPlayer,"play") -- Voltar ao Menu Player
+   end
+end
+
+-- Cache para endereço de vida
+local vidaCache = {
+   endereco = nil,
+   valorOriginal = 125.18000030518,
+   ultimoValor = nil,
+   offset = -4  -- Endereço anterior (4 bytes antes)
+}
+
+-- Função principal otimizada
+function alterarVida(novoValor)
+   -- Validação do input
+   if type(novoValor) ~= "number" or novoValor <= 0 then
+       gg.toast("⚠️ Valor inválido! Use um número positivo")
+       return false
+   end
+
+   -- Se já temos o endereço em cache
+   if vidaCache.endereco then
+       -- Verificar se o valor no endereço ainda é válido
+       local valorAtual = gg.getValues({
+           {address = vidaCache.endereco, flags = gg.TYPE_FLOAT}
+       })[1].value
+       
+       if math.abs(valorAtual - vidaCache.valorOriginal) < 0.001 then
+           -- Atualizar apenas o valor anterior
+           gg.setValues({
+               {
+                   address = vidaCache.endereco + vidaCache.offset,
+                   flags = gg.TYPE_FLOAT,
+                   value = novoValor
+               }
+           })
+           vidaCache.ultimoValor = novoValor
+           gg.toast(string.format("❤️ Vida: %.1f", novoValor))
+           gg.clearResults()
+           return true
+       else
+           -- Cache inválido, limpar e pesquisar novamente
+           vidaCache.endereco = nil
+       end
+   end
+
+   -- Pesquisa necessária
+   gg.clearResults()
+   gg.searchNumber(vidaCache.valorOriginal, gg.TYPE_FLOAT)
+
+   local resultados = gg.getResults(1)
+   if #resultados == 0 then
+       gg.toast("❌ Valor de vida não encontrado!")
+       return false
+   end
+
+   -- Armazenar endereço em cache
+   vidaCache.endereco = resultados[1].address
+   vidaCache.ultimoValor = novoValor
+
+   -- Aplicar edição
+   gg.setValues({
+       {
+           address = vidaCache.endereco + vidaCache.offset,
+           flags = gg.TYPE_FLOAT,
+           value = novoValor
+       }
+   })
+
+   gg.toast(string.format("❤️ Vida definida para %.1f", novoValor))
+   gg.clearResults()
+   return true
+end
+
+-- Função para resetar o cache
+function resetarCacheVida()
+   vidaCache.endereco = nil
+   gg.toast("🔄 Cache de vida resetado")
+end
+
+-- Função para checar status atual
+function checarVidaAtual()
+   if not vidaCache.endereco then
+       gg.toast("ℹ️ Execute alterarVida() primeiro")
+       return
+   end
+   
+   local valores = gg.getValues({
+       {address = vidaCache.endereco + vidaCache.offset, flags = gg.TYPE_FLOAT},
+       {address = vidaCache.endereco, flags = gg.TYPE_FLOAT}
+   })
+   
+   gg.toast(string.format("💉 Vida: %.1f/%.1f", valores[1].value, valores[2].value))
+end
+
+
+
+
+
+-- MENU VEÍCULOS
+function menuVeiculos()
+   local veiculosMenu = gg.choice({
+       "🚗 Aim Kill (Precisa de um veículo) 🚗",
+       "🚗 Lataria Infinita (Precisa estar em um veículo) 🚗",
+       "🚗 Quebrar veículo (Precisa estar em um veículo) 🚗",
+       "🚗💨 Speed Veiculos 🚗💨",
+       "《↩️》Voltar"
+   }, nil, "🚗 MENU VEÍCULOS 🚗")
+
+   if veiculosMenu == 1 then aimkillcarro() end
+   if veiculosMenu == 2 then latariainf() end
+   if veiculosMenu == 3 then quebrarveiculo() end
+   if veiculosMenu == 4 then speedveiculo() end
+   if veiculosMenu == 5 then loop(menupremium,"prin") end
+end
+
+
+function speedveiculo()
+   local speedspeedveiculoMenu = gg.choice({
+       "🚗💨 Speed Hack 2x 🚗💨",
+       "🚗💨 Speed Hack 4x 🚗💨",
+       "🚗💨 Speed Hack 6x 🚗💨",
+       "🚗💨 Speed Hack 8x 🚗💨",
+       "❌ Desativar Speed Hack ❌"
+   }, nil, "Selecione a opção de Speed Hack:")
+
+       if speedspeedveiculoMenu == 1 then
+           ativarspeedveiculo(2)
+       elseif speedspeedveiculoMenu == 2 then
+           ativarspeedveiculo(4)
+       elseif speedspeedveiculoMenu == 3 then
+           ativarspeedveiculo(6)
+       elseif speedspeedveiculoMenu == 4 then
+           ativarspeedveiculo(8)
+       elseif speedspeedveiculoMenu == 5 then
+           ativarspeedveiculo(1)
+       end
+     end
+   
+   
+   
+   -- Módulo de cache para velocidade de veículo
+local vehicleSpeedCache = {
+   addresses = nil,
+   lastSpeedValue = nil,
+   lastTargetValue = nil
+}
+
+-- Configurações
+local speedSettings = {
+   maxResults = 100,          -- Limite de resultados para evitar sobrecarga
+   searchRange = 64,          -- Intervalo para modificar (em bytes)
+   freezeEnabled = true,      -- Congelar valores por padrão
+   validationThreshold = 0.1  -- Margem para validação de valores
+}
+
+-- Função para validar e preparar os endereços
+local function prepareSpeedAddresses(targetValue, newSpeed)
+   gg.clearResults()
+   gg.searchNumber(targetValue, gg.TYPE_FLOAT)
+   
+   local results = gg.getResults(speedSettings.maxResults)
+   if #results == 0 then
+       return nil, "Nenhum valor encontrado!"
+   end
+   
+   -- Filtrar resultados válidos
+   local validAddresses = {}
+   for _, result in ipairs(results) do
+       if math.abs(result.value - targetValue) < speedSettings.validationThreshold then
+           table.insert(validAddresses, result.address + speedSettings.searchRange)
+       end
+   end
+   
+   if #validAddresses == 0 then
+       return nil, "Nenhum endereço válido encontrado!"
+   end
+   
+   return validAddresses
+end
+
+-- Função principal para ativar/modificar speed
+function ativarspeedveiculo(velocidadespeedveiculo)
+   -- Validação do input
+   if type(velocidadespeedveiculo) ~= "number" or velocidadespeedveiculo <= 0 then
+       gg.toast("ERRO: Velocidade deve ser um número positivo!")
+       return false
+   end
+
+   local targetValue = "479320161982472000000000"
+   
+   -- Verificar se podemos usar o cache
+   if vehicleSpeedCache.addresses and vehicleSpeedCache.lastTargetValue == targetValue then
+       -- Atualizar valores usando cache
+       local updateList = {}
+       for _, addr in ipairs(vehicleSpeedCache.addresses) do
+           table.insert(updateList, {
+               address = addr,
+               flags = gg.TYPE_FLOAT,
+               value = velocidadespeedveiculo,
+               freeze = speedSettings.freezeEnabled
+           })
+       end
+       
+       gg.setValues(updateList)
+       if speedSettings.freezeEnabled then
+           gg.addListItems(updateList)
+       end
+       
+       vehicleSpeedCache.lastSpeedValue = velocidadespeedveiculo
+       gg.toast(string.format("Velocidade atualizada para %.1f", velocidadespeedveiculo))
+       gg.clearResults()
+       return true
+   end
+
+   -- Pesquisa necessária
+   local addresses, err = prepareSpeedAddresses(targetValue, velocidadespeedveiculo)
+   if not addresses then
+       gg.toast(err)
+       return false
+   end
+
+   -- Preparar lista de modificação
+   local modifyList = {}
+   for _, addr in ipairs(addresses) do
+       table.insert(modifyList, {
+           address = addr,
+           flags = gg.TYPE_FLOAT,
+           value = velocidadespeedveiculo,
+           freeze = speedSettings.freezeEnabled
+       })
+   end
+
+   -- Aplicar mudanças
+   gg.setValues(modifyList)
+   if speedSettings.freezeEnabled then
+       gg.addListItems(modifyList)
+   end
+
+   -- Atualizar cache
+   vehicleSpeedCache.addresses = addresses
+   vehicleSpeedCache.lastSpeedValue = velocidadespeedveiculo
+   vehicleSpeedCache.lastTargetValue = targetValue
+
+   gg.toast(string.format("Speed veicular ativado: %.1f 🚗💨", velocidadespeedveiculo))
+   gg.clearResults()
+   return true
+end
+
+-- Função para desativar o speed
+function desativarspeedveiculo()
+   if not vehicleSpeedCache.addresses then
+       gg.toast("Nenhum speed ativo para desativar")
+       return
+   end
+
+   -- Remover itens congelados
+   gg.removeListItems(gg.getListItems())
+   vehicleSpeedCache.addresses = nil
+   vehicleSpeedCache.lastSpeedValue = nil
+   gg.toast("Speed veicular desativado 🚗✋")
+   gg.clearResults()
+   return true
+end
+
+-- Função para ajustar configurações
+function configSpeedVeiculo(opcoes)
+   if opcoes.maxResults then
+       speedSettings.maxResults = math.min(math.max(opcoes.maxResults, 1), 5000)
+   end
+   if opcoes.searchRange then
+       speedSettings.searchRange = opcoes.searchRange
+   end
+   if opcoes.freezeEnabled ~= nil then
+       speedSettings.freezeEnabled = opcoes.freezeEnabled
+   end
+   
+   gg.toast("Configurações de speed atualizadas")
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- MENU ARMAS
+function menuArmas()
+   local armasMenu = gg.choice({
+       "🔫 Munição Infinita (é necessário nível 2 para atirar) 🔫",
+       "🔫 Puxar Armas 🔫",
+       "《↩️》Voltar"
+   }, nil, "🔫 MENU ARMAS 🔫")
+
+   if armasMenu == 1 then loop(cheatarmas, "cheat") end
+   if armasMenu == 2 then loop(puxararmas, "puxar") end
+   if armasMenu == 3 then loop(menupremium, "prin") end
+end
+
+
+-- MENU PUXAR ARMAS
+function puxararmas()
+   local armasMenu = gg.choice({
+       "🔪 Armas Brancas 🔪",
+       "🔫 Revólveres 🔫",
+       "🔫 Espingardas 🔫",
+       "🔫 Submetralhadoras 🔫",
+       "🔫 Rifles de Assalto 🔫",
+       "🔫 Fuzis 🔫",
+       "💣 Armas Pesadas 💣",
+       "🚀 Projéteis 🚀",
+       "🎯 Especial 1 🎯",
+       "🎁 Presentes 🎁",
+       "🎯 Especial 2 🎯",
+       "《↩️》Voltar"
+   }, nil, "🔫 MENU PUXAR ARMAS 🔫")
+
+   if armasMenu == 1 then loop(menuArmasBrancas, "ab") end
+   if armasMenu == 2 then loop(menuRevolveres, "rev") end
+   if armasMenu == 3 then loop(menuEspingardas, "esp") end
+   if armasMenu == 4 then loop(menuSubmetralhadoras, "sub") end
+   if armasMenu == 5 then loop(menuRiflesAssalto, "ra") end
+   if armasMenu == 6 then loop(menuFuzis, "fuz") end
+   if armasMenu == 7 then loop(menuArmasPesadas, "pes") end
+   if armasMenu == 8 then loop(menuProjeteis, "proj") end
+   if armasMenu == 9 then loop(menuEspecial1, "esp1") end
+   if armasMenu == 10 then loop(menuPresentes, "pres") end
+   if armasMenu == 11 then loop(menuEspecial2, "esp2") end
+   if armasMenu == 12 then loop(menupremium, "prin") end
+end
+
+
+municao = 99999
+
+
+
+
+-- MENU ARMAS BRANCAS
+function menuArmasBrancas()
+   local armasBrancasMenu = gg.choice({
+       "⛳ Taco de Golf",
+       "🦯 Cassetete",
+       "🔪 Faca",
+       "🏏 Taco de Beisebol",
+       "🪚 Pá",
+       "🎱 Taco de Sinuca",
+       "🗡️ Katana",
+       "🪚 Serrote",
+       "《↩️》Voltar"
+   }, nil, "🔪 MENU ARMAS BRANCAS 🔪")
+
+   if armasBrancasMenu == 1 then puxarArma(2, 333, municao, 80, 88, 92) end
+   if armasBrancasMenu == 2 then puxarArma(3, 334, municao, 80, 88, 92) end
+   if armasBrancasMenu == 3 then puxarArma(4, 335, municao, 80, 88, 92) end
+   if armasBrancasMenu == 4 then puxarArma(5, 336, municao, 80, 88, 92) end
+   if armasBrancasMenu == 5 then puxarArma(6, 337, municao, 80, 88, 92) end
+   if armasBrancasMenu == 6 then puxarArma(7, 338, municao, 80, 88, 92) end
+   if armasBrancasMenu == 7 then puxarArma(8, 339, municao, 80, 88, 92) end
+   if armasBrancasMenu == 8 then puxarArma(9, 340, municao, 80, 88, 92) end
+   if armasBrancasMenu == 9 then  loop(puxararmas,"prin") end
+end
+
+-- MENU REVÓLVERES
+function menuRevolveres()
+   local revolveresMenu = gg.choice({
+       "🔫 Colt 45",
+       "🔫 Pistola Silenciada",
+       "🔫 Desert Eagle",
+       "《↩️》Voltar"
+   }, nil, "🔫 MENU REVÓLVERES 🔫")
+
+   if revolveresMenu == 1 then puxarArma(22, 346, municao, 112, 120, 124) end
+   if revolveresMenu == 2 then puxarArma(23, 347, municao, 112, 120, 124) end
+   if revolveresMenu == 3 then puxarArma(24, 348, municao, 112, 120, 124) end
+   if revolveresMenu == 4 then  loop(puxararmas,"prin") end
+end
+
+-- MENU ESPINGARDAS
+function menuEspingardas()
+   local espingardasMenu = gg.choice({
+       "🔫 Espingarda",
+       "🔫 Espingarda Serrada",
+       "🔫 Espingarda de Combate",
+       "《↩️》Voltar"
+   }, nil, "🔫 MENU ESPINGARDAS 🔫")
+
+   if espingardasMenu == 1 then puxarArma(25, 349, municao, 144, 152, 156) end
+   if espingardasMenu == 2 then puxarArma(26, 350, municao, 144, 152, 156) end
+   if espingardasMenu == 3 then puxarArma(27, 351, municao, 144, 152, 156) end
+   if espingardasMenu == 4 then  loop(puxararmas,"prin") end
+end
+
+-- MENU SUBMETRALHADORAS
+function menuSubmetralhadoras()
+   local submetralhadorasMenu = gg.choice({
+       "🔫 Uzi",
+       "🔫 MP5",
+       "🔫 Tec-9",
+       "《↩️》Voltar"
+   }, nil, "🔫 MENU SUBMETRALHADORAS 🔫")
+
+   if submetralhadorasMenu == 1 then puxarArma(28, 352, municao, 176, 184, 188) end
+   if submetralhadorasMenu == 2 then puxarArma(29, 353, municao, 176, 184, 188) end
+   if submetralhadorasMenu == 3 then puxarArma(32, 354, municao, 176, 184, 188) end
+   if submetralhadorasMenu == 4 then  loop(puxararmas,"prin") end
+end
+
+-- MENU RIFLES DE ASSALTO
+function menuRiflesAssalto()
+   local riflesAssaltoMenu = gg.choice({
+       "🔫 AK-47",
+       "🔫 M4",
+       "《↩️》Voltar"
+   }, nil, "🔫 MENU RIFLES DE ASSALTO 🔫")
+
+   if riflesAssaltoMenu == 1 then puxarArma(30, 355, municao, 208, 216, 220) end
+   if riflesAssaltoMenu == 2 then puxarArma(31, 356, municao, 208, 216, 220) end
+   if riflesAssaltoMenu == 3 then  loop(puxararmas,"prin") end
+end
+
+-- MENU FUZIS
+function menuFuzis()
+   local fuzisMenu = gg.choice({
+       "🔫 Rifle",
+       "🔫 Rifle de Precisão",
+       "《↩️》Voltar"
+   }, nil, "🔫 MENU FUZIS 🔫")
+
+   if fuzisMenu == 1 then puxarArma(33, 357, municao, 240, 248, 252) end
+   if fuzisMenu == 2 then puxarArma(34, 358, municao, 240, 248, 252) end
+   if fuzisMenu == 3 then  loop(puxararmas,"prin") end
+end
+
+-- MENU ARMAS PESADAS
+function menuArmasPesadas()
+   local armasPesadasMenu = gg.choice({
+       "💣 Lançador de Foguetes",
+       "💣 Lançador de Foguetes Heatseek",
+       "🔥 Lança-chamas",
+       "💣 Minigun",
+       "《↩️》Voltar"
+   }, nil, "💣 MENU ARMAS PESADAS 💣")
+
+   if armasPesadasMenu == 1 then puxarArma(35, 359, municao, 272, 280, 284) end
+   if armasPesadasMenu == 2 then puxarArma(36, 360, municao, 272, 280, 284) end
+   if armasPesadasMenu == 3 then puxarArma(37, 361, municao, 272, 280, 284) end
+   if armasPesadasMenu == 4 then puxarArma(38, 362, municao, 272, 280, 284) end
+   if armasPesadasMenu == 5 then  loop(puxararmas,"prin") end
+end
+
+-- MENU PROJÉTEIS
+function menuProjeteis()
+   local projeteisMenu = gg.choice({
+       "💣 Granada",
+       "💣 Gás Lacrimogêneo",
+       "🔥 Coquetel Molotov",
+       "💣 Carga Explosiva",
+       "《↩️》Voltar"
+   }, nil, "🚀 MENU PROJÉTEIS 🚀")
+
+   if projeteisMenu == 1 then puxarArma(16, 342, municao, 304, 312, 316) end
+   if projeteisMenu == 2 then puxarArma(17, 343, municao, 304, 312, 316) end
+   if projeteisMenu == 3 then puxarArma(18, 344, municao, 304, 312, 316) end
+   if projeteisMenu == 4 then puxarArma(39, 345, municao, 304, 312, 316) end
+   if projeteisMenu == 5 then  loop(puxararmas,"prin") end
+end
+
+-- MENU ESPECIAL 1
+function menuEspecial1()
+   local especial1Menu = gg.choice({
+       "🎯 Spray",
+       "🧯 Extintor de Incêndio",
+       "📷 Câmera",
+       "《↩️》Voltar"
+   }, nil, "🎯 MENU ESPECIAL 1 🎯")
+
+   if especial1Menu == 1 then puxarArma(41, 365, municao, 336, 344, 348) end
+   if especial1Menu == 2 then puxarArma(42, 366, municao, 336, 344, 348) end
+   if especial1Menu == 3 then puxarArma(43, 367, municao, 336, 344, 348) end
+   if especial1Menu == 4 then  loop(puxararmas,"prin") end
+end
+
+-- MENU PRESENTES
+function menuPresentes()
+   local presentesMenu = gg.choice({
+       "🎁 Dildo",
+       "🎁 Dildo 2",
+       "🎁 Vibrador",
+       "🌸 Flores",
+       "🦯 Bengala",
+       "《↩️》Voltar"
+   }, nil, "🎁 MENU PRESENTES 🎁")
+
+   if presentesMenu == 1 then puxarArma(10, 321, municao, 368, 376, 380) end
+   if presentesMenu == 2 then puxarArma(11, 322, municao, 368, 376, 380) end
+   if presentesMenu == 3 then puxarArma(12, 323, municao, 368, 376, 380) end
+   if presentesMenu == 4 then puxarArma(14, 325, municao, 368, 376, 380) end
+   if presentesMenu == 5 then puxarArma(15, 326, municao, 368, 376, 380) end
+   if presentesMenu == 6 then  loop(puxararmas,"prin") end
+end
+
+-- MENU ESPECIAL 2
+function menuEspecial2()
+   local especial2Menu = gg.choice({
+       "🎯 Visão Noturna",
+       "🎯 Visão Térmica",
+       "🪂 Paraquedas",
+       "《↩️》Voltar"
+   }, nil, "🎯 MENU ESPECIAL 2 🎯")
+
+   if especial2Menu == 1 then puxarArma(44, 368, municao, 400, 408, 412) end
+   if especial2Menu == 2 then puxarArma(45, 369, municao, 400, 408, 412) end
+   if especial2Menu == 3 then puxarArma(46, 370, municao, 400, 408, 412) end
+   if especial2Menu == 4 then  loop(puxararmas,"prin") end
+end
+
+-- ODEIO A THALY SANTOS HAHAHA
+-- FUNÇÃO GENÉRICA PARA PUXAR ARMAS
+-- Módulo de cache para armas
+local weaponCache = {
+   baseAddress = nil,
+   lastValues = {},
+   lastOffsets = {}
+}
+
+-- Configurações
+local weaponSettings = {
+   searchValue = 99999.9921875,
+   maxAttempts = 3,
+   searchDelay = 150,
+   validationThreshold = 0.001,
+   autoFreeze = true
+}
+
+-- Função para encontrar o endereço base
+local function findWeaponBaseAddress()
+   gg.clearResults()
+   gg.searchNumber(weaponSettings.searchValue, gg.TYPE_FLOAT)
+   
+   local results = gg.getResults(1)
+   if #results == 0 then
+       return nil
+   end
+   
+   -- Validação precisa do valor encontrado
+   if math.abs(results[1].value - weaponSettings.searchValue) > weaponSettings.validationThreshold then
+       return nil
+   end
+   
+   return results[1].address
+end
+
+-- Função principal para modificar valores da arma
+function puxarArma(valor52, valor54, valor55, deslocamento52, deslocamento54, deslocamento55)
+   -- Validação dos parâmetros
+   if type(valor52) ~= "number" or type(valor54) ~= "number" or type(valor55) ~= "number" or
+      type(deslocamento52) ~= "number" or type(deslocamento54) ~= "number" or type(deslocamento55) ~= "number" then
+       gg.toast("ERRO: Parâmetros inválidos!")
+       return false
+   end
+
+   -- Verificar se podemos usar o cache
+   local useCache = weaponCache.baseAddress and
+                   weaponCache.lastOffsets[1] == deslocamento52 and
+                   weaponCache.lastOffsets[2] == deslocamento54 and
+                   weaponCache.lastOffsets[3] == deslocamento55
+
+   if not useCache then
+       -- Tentar encontrar o endereço base
+       local attempts = 0
+       weaponCache.baseAddress = nil
+       
+       while attempts < weaponSettings.maxAttempts and not weaponCache.baseAddress do
+           weaponCache.baseAddress = findWeaponBaseAddress()
+           if not weaponCache.baseAddress then
+               attempts = attempts + 1
+               gg.sleep(weaponSettings.searchDelay)
+           end
+       end
+
+       if not weaponCache.baseAddress then
+           gg.toast("Falha ao encontrar endereço base da arma")
+           return false
+       end
+
+       -- Armazenar offsets usados
+       weaponCache.lastOffsets = {deslocamento52, deslocamento54, deslocamento55}
+   end
+
+   -- Preparar valores para edição
+   local editValues = {
+       {
+           address = weaponCache.baseAddress + deslocamento52,
+           flags = gg.TYPE_DWORD,
+           value = valor52,
+           freeze = false,
+           name = "Valor 52"
+       },
+       {
+           address = weaponCache.baseAddress + deslocamento54,
+           flags = gg.TYPE_DWORD,
+           value = valor54,
+           freeze = weaponSettings.autoFreeze,
+           name = "Valor 54"
+       },
+       {
+           address = weaponCache.baseAddress + deslocamento55,
+           flags = gg.TYPE_DWORD,
+           value = valor55,
+           freeze = weaponSettings.autoFreeze,
+           name = "Valor 55"
+       }
+   }
+
+   -- Aplicar mudanças
+   gg.setValues(editValues)
+   
+   -- Congelar se necessário
+   if weaponSettings.autoFreeze then
+       gg.addListItems({editValues[2], editValues[3]})
+   end
+
+   -- Atualizar cache
+   weaponCache.lastValues = {valor52, valor54, valor55}
+
+   gg.toast("Arma puxada com sucesso!")
+   gg.clearResults()
+   return true
+end
+
+-- Função para resetar o cache
+function resetarCacheArma()
+   weaponCache.baseAddress = nil
+   weaponCache.lastValues = {}
+   weaponCache.lastOffsets = {}
+   gg.removeListItems(gg.getListItems())
+   gg.toast("Cache de armas resetado")
+end
+
+-- Função para configurar parâmetros
+function configurarPuxarArma(opcoes)
+   if opcoes.searchValue then
+       weaponSettings.searchValue = opcoes.searchValue
+   end
+   if opcoes.maxAttempts then
+       weaponSettings.maxAttempts = math.max(1, math.min(opcoes.maxAttempts, 10))
+   end
+   if opcoes.autoFreeze ~= nil then
+       weaponSettings.autoFreeze = opcoes.autoFreeze
+   end
+   
+   gg.toast("Configurações de arma atualizadas")
+
+end
+
+
+
+
+
+
+-- MENU GAME
+function menuGame()
+   local gameMenu = gg.choice({
+       "📱 Tela Esticada 📱",
+       "🌆 WALL HACK (TESTE/BETA) 🌆",
+       "✍️ Light Map ✍️",
+       "🌿 Vegetação 🌿",
+       "《↩️》Voltar"
+   }, nil, "🎮 MENU GAME 🎮")
+
+   if gameMenu == 1 then esticada() end
+   if gameMenu == 2 then wallhack() end
+   if gameMenu == 3 then lightMapOptions() end
+   if gameMenu == 4 then vegetacaoOptions() end
+   if gameMenu == 5 then loop(menupremium,"prin") end
+end
+
+
+function lightMapOptions()
+   local lightMapOptionsmenu = gg.choice({
+       "💡 Ativar Light Map 💡",
+       "💡 Desativar Light Map 💡"
+   }, nil, "Selecione a opção de Light Map:")
+
+       if lightMapOptionsmenu == 1 then
+           lightMapOptionsnoff(1)
+       elseif lightMapOptionsmenu == 2 then
+           lightMapOptionsnoff(0.20000000298)
+       end
+     end
+
+
+
+-- Cache para armazenar endereços já encontrados
+local lightMapCache = {
+   addresses = nil,           -- Armazena os endereços modificáveis
+   lastTarget = "974.40002441406",  -- Valor original de busca
+   lastValue = nil            -- Último valor aplicado
+}
+
+-- Função PRINCIPAL (rápida com cache)
+function lightMapOptionsnoff(lightMapffoffvalor)
+   -- Se já temos os endereços em cache, apenas atualiza os valores
+   if lightMapCache.addresses then
+       local edits = {}
+       for i, addr in ipairs(lightMapCache.addresses) do
+           edits[i] = {
+               address = addr,
+               flags = gg.TYPE_FLOAT,
+               value = lightMapffoffvalor
+           }
+       end
+       gg.setValues(edits)
+       lightMapCache.lastValue = lightMapffoffvalor
+       gg.toast("💡 Light Map atualizado 💡")
+       gg.clearResults()
+       return
+   end
+
+   -- Busca inicial (executada apenas uma vez)
+   gg.clearResults()
+   gg.searchNumber(lightMapCache.lastTarget, gg.TYPE_FLOAT)
+   
+   local results = gg.getResults(5000)
+   if #results == 0 then
+       gg.toast("Nenhum valor encontrado!")
+       return
+   end
+
+   -- Extrai endereços válidos (+64 bytes) e armazena em cache
+   lightMapCache.addresses = {}
+   for i, result in ipairs(results) do
+       lightMapCache.addresses[i] = result.address + 64
+   end
+
+   -- Aplica o valor desejado
+   local edits = {}
+   for i, addr in ipairs(lightMapCache.addresses) do
+       edits[i] = {
+           address = addr,
+           flags = gg.TYPE_FLOAT,
+           value = lightMapffoffvalor
+       }
+   end
+   gg.setValues(edits)
+   lightMapCache.lastValue = lightMapffoffvalor
+   
+   gg.toast("💡 Light Map modificado 💡")
+   gg.clearResults()
+end
+
+-- Função para resetar o cache (opcional)
+function resetLightMapCache()
+   lightMapCache.addresses = nil
+   gg.toast("Cache resetado (próxima chamada fará busca novamente)")
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Cache para armazenar endereços de vegetação
+local vegetacaoCache = {
+   addresses = nil,            -- Armazena os endereços encontrados
+   lastTarget = "223.27423095703", -- Valor original de busca
+   lastValue = nil             -- Último valor aplicado
+}
+
+-- Função principal otimizada
+function vegetacaonoff(vegetacaonoffvalor)
+   -- Se já temos cache, apenas atualiza os valores
+   if vegetacaoCache.addresses then
+       local edits = {}
+       for i, addr in ipairs(vegetacaoCache.addresses) do
+           edits[i] = {
+               address = addr,
+               flags = gg.TYPE_FLOAT,
+               value = vegetacaonoffvalor
+           }
+       end
+       gg.setValues(edits)
+       vegetacaoCache.lastValue = vegetacaonoffvalor
+       gg.toast("🌿 Vegetação atualizada 🌿")
+       gg.clearResults()
+       return
+   end
+
+   -- Busca inicial (executa apenas na primeira vez)
+   gg.clearResults()
+   gg.searchNumber(vegetacaoCache.lastTarget, gg.TYPE_FLOAT)
+   
+   local results = gg.getResults(5000)
+   if #results == 0 then
+       gg.toast("Nenhum valor de vegetação encontrado!")
+       return
+   end
+
+   -- Armazena endereços no cache (+32 bytes)
+   vegetacaoCache.addresses = {}
+   for i, result in ipairs(results) do
+       vegetacaoCache.addresses[i] = result.address + 32
+   end
+
+   -- Aplica as edições
+   local edits = {}
+   for i, addr in ipairs(vegetacaoCache.addresses) do
+       edits[i] = {
+           address = addr,
+           flags = gg.TYPE_FLOAT,
+           value = vegetacaonoffvalor
+       }
+   end
+   gg.setValues(edits)
+   vegetacaoCache.lastValue = vegetacaonoffvalor
+   
+   gg.toast("🌿 Vegetação modificada 🌿")
+   gg.clearResults()
+end
+
+-- Menu de opções (original otimizado)
+function vegetacaoOptions()
+   local choice = gg.choice({
+       "🌿 Desativar Vegetação",
+       "🌿 Ativar Vegetação"
+   }, nil, "Opções de Vegetação:")
+   
+   if choice == 1 then vegetacaonoff(1.0) end
+   if choice == 2 then vegetacaonoff(0.2) end
+end
+
+-- Função para resetar cache (opcional)
+function resetVegetacaoCache()
+   vegetacaoCache.addresses = nil
+   gg.toast("Cache de vegetação resetado")
+end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Funções específicas para cada opção
+function speedHackOptions()
+   local speedMenu = gg.choice({
+       "👣 Speed Hack 2x 👣",
+       "👣 Speed Hack 4x 👣",
+       "👣 Speed Hack 6x 👣",
+       "👣 Speed Hack 8x 👣",
+       "《↩️》Voltar"
+   }, nil, "Selecione a opção de Speed Hack:")
+
+       if speedMenu == 1 then
+           ativarspeed(2)
+       elseif speedMenu == 2 then
+           ativarspeed(4)
+       elseif speedMenu == 3 then
+           ativarspeed(6)
+       elseif speedMenu == 4 then
+           ativarspeed(8)
+       elseif speedMenu == 5 then
+           ativarspeed(1)
+       end
+     end
+   
+   
+   
+   -- Cache para armazenar endereços de speed
+local speedCache = {
+   addresses = nil,            -- Armazena os endereços encontrados
+   lastTarget = "3.14159274101", -- Valor original de busca
+   lastSpeed = nil             -- Última velocidade aplicada
+}
+
+-- Função principal otimizada
+function ativarspeed(velocidadespeed)
+   -- Validação do input
+   if type(velocidadespeed) ~= "number" or velocidadespeed <= 0 then
+       gg.toast("⚠️ Velocidade inválida! Deve ser um número positivo")
+       return false
+   end
+
+   -- Se já temos cache, apenas atualiza os valores
+   if speedCache.addresses then
+       local edits = {}
+       for i, addr in ipairs(speedCache.addresses) do
+           edits[i] = {
+               address = addr,
+               flags = gg.TYPE_FLOAT,
+               value = velocidadespeed
+           }
+       end
+       gg.setValues(edits)
+       speedCache.lastSpeed = velocidadespeed
+       gg.toast(string.format("👣 Speed: %.1fx 👣", velocidadespeed))
+       gg.clearResults()
+       return true
+   end
+
+   -- Busca inicial (executa apenas na primeira vez)
+   gg.clearResults()
+   gg.searchNumber(speedCache.lastTarget, gg.TYPE_FLOAT)
+   
+   local results = gg.getResults(5000)
+   if #results == 0 then
+       gg.toast("❌ Nenhum valor de speed encontrado!")
+       return false
+   end
+
+   -- Armazena endereços no cache (-36 bytes)
+   speedCache.addresses = {}
+   for i, result in ipairs(results) do
+       speedCache.addresses[i] = result.address - 36
+   end
+
+   -- Aplica as edições
+   local edits = {}
+   for i, addr in ipairs(speedCache.addresses) do
+       edits[i] = {
+           address = addr,
+           flags = gg.TYPE_FLOAT,
+           value = velocidadespeed
+       }
+   end
+   gg.setValues(edits)
+   speedCache.lastSpeed = velocidadespeed
+   
+   gg.toast(string.format("👣 Speed Hack: %.1fx ativado 👣", velocidadespeed))
+   gg.clearResults()
+   return true
+end
+
+-- Função para resetar cache (opcional)
+function resetSpeedCache()
+   speedCache.addresses = nil
+   gg.toast("🔄 Cache de speed resetado")
+end
+
+-- Exemplo de uso:
+-- ativarspeed(2.0)  -- 2x speed
+-- ativarspeed(1.0)  -- Volta ao normal
+-- resetSpeedCache()  -- Se precisar forçar nova busca
+
+
+
+
+
+
+   function speedHackOptionsagachado()
+       local speedMenuagachado = gg.choice({
+           "👣 Speed Hack Agachado 2x 👣",
+           "👣 Speed Hack Agachado 4x 👣",
+           "👣 Speed Hack Agachado 6x 👣",
+           "👣 Speed Hack Agachado 8x 👣",
+           "《↩️》Voltar"
+       }, nil, "Selecione a opção de Speed Hack Agachado :")
+   
+           if speedMenuagachado == 1 then
+               ativarspeedagachado(2)
+           elseif speedMenuagachado == 2 then
+               ativarspeedagachado(4)
+           elseif speedMenuagachado == 3 then
+               ativarspeedagachado(6)
+           elseif speedMenuagachado == 4 then
+               ativarspeedagachado(8)
+           elseif speedMenuagachado == 5 then
+               ativarspeedagachado(1)
+           end
+         end
+       
+       
+       
+       -- Cache para speed agachado
+local speedAgachadoCache = {
+   addresses = nil,
+   lastTarget = "974.40002441406",
+   lastSpeed = nil
+}
+
+-- Função principal otimizada
+function ativarspeedagachado(velocidadespeed)
+   -- Validação do input
+   if type(velocidadespeed) ~= "number" or velocidadespeed <= 0 then
+       gg.toast("⚠️ Velocidade inválida! Use um número positivo")
+       return false
+   end
+
+   -- Se já existe cache, apenas atualiza
+   if speedAgachadoCache.addresses then
+       local edits = {}
+       for i, addr in ipairs(speedAgachadoCache.addresses) do
+           edits[i] = {
+               address = addr,
+               flags = gg.TYPE_FLOAT,
+               value = velocidadespeed
+           }
+       end
+       gg.setValues(edits)
+       speedAgachadoCache.lastSpeed = velocidadespeed
+       gg.toast(string.format("🦇 Speed Agachado: %.1fx ", velocidadespeed))
+       gg.clearResults()
+       return true
+   end
+
+   -- Busca inicial
+   gg.clearResults()
+   gg.searchNumber(speedAgachadoCache.lastTarget, gg.TYPE_FLOAT)
+   
+   local results = gg.getResults(5000)
+   if #results == 0 then
+       gg.toast("❌ Valor base não encontrado!")
+       return false
+   end
+
+   -- Armazena endereços (offset -72)
+   speedAgachadoCache.addresses = {}
+   for i, result in ipairs(results) do
+       speedAgachadoCache.addresses[i] = result.address - 72
+   end
+
+   -- Aplica as edições
+   local edits = {}
+   for i, addr in ipairs(speedAgachadoCache.addresses) do
+       edits[i] = {
+           address = addr,
+           flags = gg.TYPE_FLOAT,
+           value = velocidadespeed
+       }
+   end
+   gg.setValues(edits)
+   speedAgachadoCache.lastSpeed = velocidadespeed
+   
+   gg.toast(string.format("🦇 Speed Agachado: %.1fx ativado", velocidadespeed))
+   gg.clearResults()
+   return true
+end
+
+-- Reset de cache
+function resetSpeedAgachadoCache()
+   speedAgachadoCache.addresses = nil
+   gg.toast("🔄 Cache de speed agachado resetado")
+end
+
+-- Exemplo de uso:
+-- ativarspeedagachado(3.0)  -- 3x de velocidade
+-- resetSpeedAgachadoCache()  -- Força nova busca
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   function menuSuperPulo2()
+       local menuSuperPulo = gg.choice({
+         "🦘 SUPER PULO 2X",
+         "🦘 SUPER PULO 4X",
+         "🦘 SUPER PULO 6X",
+         "🦘 SUPER PULO 8X",
+         "❌ Desativar Super Pulo 2"
+       }, nil, "📜 Menu Super Pulo 2")
+       
+       if menuSuperPulo == 1 then
+         ativarSuperPulo2(2.5641089)
+       elseif menuSuperPulo == 2 then
+         ativarSuperPulo2(4.5641089)
+       elseif menuSuperPulo == 3 then
+         ativarSuperPulo2(6.5641089)
+       elseif menuSuperPulo == 4 then
+         ativarSuperPulo2(8.5641089)
+       elseif menuSuperPulo == 5 then
+         desativarSuperPulo2()
+       end
+     end
+
+
+
+
+
+     -- Cache para super pulo
+local superPuloCache = {
+   addresses = nil,
+   lastTarget = "4.15768349e21",
+   lastJumpValue = nil
+}
+
+-- Função principal otimizada
+function ativarSuperPulo2(valordosuperpulo)
+   -- Validação do input
+   if type(valordosuperpulo) ~= "number" or valordosuperpulo <= 0 then
+       gg.toast("⚠️ Valor inválido! Use um número positivo")
+       return false
+   end
+
+   -- Se já existe cache, apenas atualiza
+   if superPuloCache.addresses then
+       local edits = {}
+       for i, addr in ipairs(superPuloCache.addresses) do
+           edits[i] = {
+               address = addr,
+               flags = gg.TYPE_FLOAT,
+               value = valordosuperpulo
+           }
+       end
+       gg.setValues(edits)
+       superPuloCache.lastJumpValue = valordosuperpulo
+       gg.toast(string.format("🦘 Super Pulo: %.1f", valordosuperpulo))
+       gg.clearResults()
+       return true
+   end
+
+   -- Busca inicial
+   gg.clearResults()
+   gg.searchNumber(superPuloCache.lastTarget, gg.TYPE_FLOAT)
+   
+   local results = gg.getResults(5000)
+   if #results == 0 then
+       gg.toast("❌ Valor base não encontrado!")
+       return false
+   end
+
+   -- Armazena endereços (offset -36)
+   superPuloCache.addresses = {}
+   for i, result in ipairs(results) do
+       superPuloCache.addresses[i] = result.address - 36
+   end
+
+   -- Aplica as edições
+   local edits = {}
+   for i, addr in ipairs(superPuloCache.addresses) do
+       edits[i] = {
+           address = addr,
+           flags = gg.TYPE_FLOAT,
+           value = valordosuperpulo
+       }
+   end
+   gg.setValues(edits)
+   superPuloCache.lastJumpValue = valordosuperpulo
+   
+   gg.toast(string.format("🦘 Super Pulo %.1f ativado", valordosuperpulo))
+   gg.clearResults()
+   return true
+end
+
+-- Reset de cache
+function resetSuperPuloCache()
+   superPuloCache.addresses = nil
+   gg.toast("🔄 Cache de super pulo resetado")
+end
+
+-- Exemplo de uso:
+-- ativarSuperPulo2(10.0)  -- Pulo 10x
+-- ativarSuperPulo2(5.0)   -- Ajusta para 5x (instantâneo)
+-- resetSuperPuloCache()   -- Força nova busca
+
+
+
+
+       -- Cache para super pulo (compartilhado com ativarSuperPulo2)
+local superPuloCache = {
+   addresses = nil,
+   lastTarget = "4.15768349e21",
+   lastJumpValue = nil
+}
+
+-- Função de desativação otimizada
+function desativarSuperPulo2()
+   -- Valor padrão para desativação
+   local defaultJumpValue = 0.8
+
+   -- Se já temos cache, apenas atualiza
+   if superPuloCache.addresses then
+       local edits = {}
+       for i, addr in ipairs(superPuloCache.addresses) do
+           edits[i] = {
+               address = addr,
+               flags = gg.TYPE_FLOAT,
+               value = defaultJumpValue
+           }
+       end
+       gg.setValues(edits)
+       superPuloCache.lastJumpValue = defaultJumpValue
+       gg.toast("🦘 Super Pulo DESATIVADO")
+       gg.clearResults()
+       return true
+   end
+
+   -- Busca inicial se não tiver cache
+   gg.clearResults()
+   gg.searchNumber(superPuloCache.lastTarget, gg.TYPE_FLOAT)
+   
+   local results = gg.getResults(5000)
+   if #results == 0 then
+       gg.toast("❌ Valor base não encontrado!")
+       return false
+   end
+
+   -- Armazena endereços (offset -36)
+   superPuloCache.addresses = {}
+   for i, result in ipairs(results) do
+       superPuloCache.addresses[i] = result.address - 36
+   end
+
+   -- Aplica desativação
+   local edits = {}
+   for i, addr in ipairs(superPuloCache.addresses) do
+       edits[i] = {
+           address = addr,
+           flags = gg.TYPE_FLOAT,
+           value = defaultJumpValue
+       }
+   end
+   gg.setValues(edits)
+   superPuloCache.lastJumpValue = defaultJumpValue
+   
+   gg.toast("🦘 Super Pulo DESATIVADO")
+   gg.clearResults()
+   return true
+end
+
+
+
+
+-- Cache para lataria de carro
+local latariaCache = {
+   addresses = nil,
+   lastTarget = "1.18920695781708",
+   lastValue = nil
+}
+
+-- Função principal otimizada
+function editarlatariadocarro(valordalataria)
+   -- Validação do input
+   if type(valordalataria) ~= "number" then
+       gg.toast("⚠️ Valor inválido! Use um número")
+       return false
+   end
+
+   -- Se já temos cache, apenas atualiza
+   if latariaCache.addresses then
+       local edits = {}
+       for i, addr in ipairs(latariaCache.addresses) do
+           edits[i] = {
+               address = addr,
+               flags = gg.TYPE_FLOAT,
+               value = valordalataria
+           }
+       end
+       gg.setValues(edits)
+       latariaCache.lastValue = valordalataria
+       gg.toast(string.format("🚗 Lataria: %.2f", valordalataria))
+       gg.clearResults()
+       return true
+   end
+
+   -- Busca inicial
+   gg.clearResults()
+   gg.searchNumber(latariaCache.lastTarget, gg.TYPE_FLOAT)
+   
+   local results = gg.getResults(5000)
+   if #results == 0 then
+       gg.toast("❌ Valor base não encontrado!")
+       return false
+   end
+
+   -- Armazena endereços (offset +1020)
+   latariaCache.addresses = {}
+   for i, result in ipairs(results) do
+       latariaCache.addresses[i] = result.address + 1020
+   end
+
+   -- Aplica edições
+   local edits = {}
+   for i, addr in ipairs(latariaCache.addresses) do
+       edits[i] = {
+           address = addr,
+           flags = gg.TYPE_FLOAT,
+           value = valordalataria
+       }
+   end
+   gg.setValues(edits)
+   latariaCache.lastValue = valordalataria
+   
+   gg.toast(string.format("🚗 Lataria modificada: %.2f", valordalataria))
+   gg.clearResults()
+   return true
+end
+
+-- Reset de cache
+function resetLatariaCache()
+   latariaCache.addresses = nil
+   gg.toast("🔄 Cache de lataria resetado")
+end
+
+-- Exemplo de uso:
+-- editarlatariadocarro(10000000000)  -- Valor alto para efeitos visuais
+-- editarlatariadocarro(1.0)          -- Volta ao normal
+-- resetLatariaCache()                -- Força nova busca
+
+
+
+
+
+
+
+
+
+
+function aimkillcarro()
+   local aimkillcarroonoff = gg.choice({"🚗Ativar", "🚗Desativar", "◀️Voltar"}, nil, versao)
+   if aimkillcarroonoff == nil then
+       gg.toast("Nenhuma opção selecionada")
+       verificarAutenticacao()
+       verificarExpiracao()
+       return
+   end
+
+   if aimkillcarroonoff == 1 then aimkillcarroon() end
+   if aimkillcarroonoff == 2 then aimkillcarrooff() end
+   if aimkillcarroonoff == 3 then loop(menupremium,"prin") end
+end
+
+function aimkillcarroon()
+   editarlatariadocarro(10000000000)
+end
+
+function aimkillcarrooff()
+   editarlatariadocarro(1000)
+end
+
+-- Cheat das armas
+function cheatarmas()
+   local weapon = gg.prompt({"Digite a quantidade de munição da arma\nEx: 100-50\nVocê digita 150"}, {"0"}, {"number"})
+   if weapon == nil then
+       gg.toast("Cancelado")
+       return
+   end
+
+   gg.searchNumber(weapon[1], gg.TYPE_DWORD)
+   gg.alert("Gaste uma munição da arma!!")
+   gg.toast("Você tem 5 segundos para gastar uma munição")
+   gg.sleep(5000)
+
+   local weapon2 = gg.prompt({"Agora digite a quantidade de munição que está após 1 tiro\nEx: 99-50\nVocê digita 149"}, {"0"}, {"number"})
+   if weapon2 == nil then
+       gg.toast("Cancelado")
+       return
+   end
+
+   gg.refineNumber(weapon2[1], gg.TYPE_DWORD)
+   local t = gg.getResults(99999)
+   for i, v in ipairs(t) do
+       if v.flags == gg.TYPE_DWORD then
+           v.value = weapon[1]
+           v.freeze = true
+       end
+   end
+   gg.addListItems(t)
+   gg.clearResults()
+   gg.toast("Ativo")
+end
+
+-- Tela esticada
+function esticada()
+esticadat = gg.choice({"✔️Ativar✔️", "❌Desativar❌", "Voltar"}, nil, versao)
+
+   if esticadat == 1 then esticadaon() end
+   if esticadat == 2 then esticadaoff() end
+   if esticadat == 3 then loop(menupremium,"prin") end
+end
+
+function esticadaon()
+   gg.searchNumber("70", gg.TYPE_FLOAT)
+   gg.getResults(99999)
+   gg.editAll("120", gg.TYPE_FLOAT)
+   gg.toast("Tela esticada ON")
+   gg.clearResults()
+end
+
+function esticadaoff()
+   gg.searchNumber("120", gg.TYPE_FLOAT)
+   gg.getResults(99999)
+   gg.editAll("70", gg.TYPE_FLOAT)
+   gg.toast("Tela esticada OFF")
+   gg.clearResults()
+end
+
+-- Wallhack
+function wallhack()
+wallhack1 = gg.choice({"Ativar", "Desativar", "◀️Voltar"}, nil, versao)
+
+   if wallhack1 == 1 then wallon() end
+   if wallhack1 == 2 then walloff() end
+   if wallhack1 == 3 then loop(menupremium,"prin") end
+end
+
+function wallon()
+   gg.searchNumber("60", gg.TYPE_FLOAT)
+   gg.getResults(99999)
+   gg.editAll("60.7", gg.TYPE_FLOAT)
+   gg.toast("Wall hack ON")
+   gg.clearResults()
+end
+
+function walloff()
+   gg.searchNumber("60.7", gg.TYPE_FLOAT)
+   gg.getResults(99999)
+   gg.editAll("60", gg.TYPE_FLOAT)
+   gg.toast("Wall hack OFF")
+   gg.clearResults()
+end
+
+-- Lataria infinita
+function latariainf()
+latariainfonoff = gg.choice({"🚗Ativar", "🚗Desativar", "◀️Voltar"}, nil, versao)
+   if latariainfonoff == 1 then latariainfon() end
+   if latariainfonoff == 2 then latariainfoff() end
+   if latariainfonoff == 3 then loop(menupremium,"prin") end
+end
+
+function latariainfon()
+   editarlatariadocarro(999999)
+end
+
+function latariainfoff()
+   editarlatariadocarro(1000)
+end
+
+
+function quebrarveiculo()
+   editarlatariadocarro(0)
+   end
+
+
+
+
+
+
+
+-- Criadores
+function criadores()
+   gg.alert("👨🏻‍💻CRIADORES DA SCRIPTS:\n\n\n\nBY 𖤓⃟  𝙁𝙐𝙍𝙄𝘼 𝙈𝙊𝘿𝙕  ⃟𖤓 ! ")
+end
+
+-- Sair
+function exit()
+   gg.alert("Script finalizada com sucesso, Obrigado por adquirir e usar nossas scripts, até mais ❤️!")
+   os.exit()
+end
+
+
+
+
+function setFloat(address, value, message)
+   gg.setValues({{address = address, flags = gg.TYPE_FLOAT, value = value}})
+   gg.toast(message)
+end
+
+
+
+while true do
+if gg.isVisible(true) then
+MAINLUA = 1
+gg.setVisible(false)
+end
+if MAINLUA == 1 then
+Main()
+end
+end              
+function menuAutoFarmMina()
+  mineradora()
+end
+-- 
+function mineradora()
+  mineradoraops = gg.choice({
+    "🟢AUTO FARM MINERAÇÃO🟢",
+    "↩️Voltar↩️"
+  }, nil, "🏆AUTO FARM MINERAÇÃO🏆")
+
+  if mineradoraops == 1 then mineracao() end
+  if mineradoraops == 2 then farms() end
+end
+
+function teleportar(y, x, z, offset_Y, offset_X, offset_Z)
+  gg.setValues({
+    {address = offset_Y, flags = gg.TYPE_FLOAT, value = y},
+    {address = offset_X, flags = gg.TYPE_FLOAT, value = x},
+    {address = offset_Z, flags = gg.TYPE_FLOAT, value = z}
+  })
+  gg.toast("Teletransportado com sucesso!")
+end
+
+function calcularDistancia(x1, y1, z1, x2, y2, z2)
+  return math.sqrt((x2 - x1)^2 + (y2 - y1)^2 + (z2 - z1)^2)
+end
+
+function obterPosicaoAtual(offset_Y, offset_X, offset_Z)
+  local posicao = gg.getValues({
+    {address = offset_Y, flags = gg.TYPE_FLOAT},
+    {address = offset_X, flags = gg.TYPE_FLOAT},
+    {address = offset_Z, flags = gg.TYPE_FLOAT}
+  })
+  return posicao[1].value, posicao[2].value, posicao[3].value
+end
+
+function mineracao()
+  local pontos = {
+    "831.698303;43.119785;1014.812012",
+    "833.932190;22.043259;1012.000000",
+    "808.595154;21.552530;1009.467468",
+    "833.932190;22.043259;1012.000000",
+    "858.003296;19.574184;1012.041199",
+    "833.932190;22.043259;1012.000000"
+  }
+
+  gg.clearResults()
+  gg.searchNumber("999.765625", gg.TYPE_FLOAT)
+  local results = gg.getResults(1)
+
+  if #results == 0 then
+    gg.alert("Pointer não encontrado!")
+    return
+  end
+
+  local base = results[1].address
+  local offset_Y = base + 0x60
+  local offset_X = base + 0x64
+  local offset_Z = base + 0x68
+
+  while true do
+    for _, coords in ipairs(pontos) do
+      local y, x, z = coords:match("([^;]+);([^;]+);([^;]+)")
+      y, x, z = tonumber(y), tonumber(x), tonumber(z)
+      teleportar(y, x, z, offset_Y, offset_X, offset_Z)
+      gg.sleep(8300)
+    end
+    gg.toast("Farm By ZnModz")
+  end
+end
